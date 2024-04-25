@@ -7,6 +7,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/alt')
+def alt():
+    return render_template('alt.html')
+
+
 @app.route('/drag_event', methods=['POST'])
 def drag_event():
     data = request.json
@@ -16,4 +21,4 @@ def drag_event():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
