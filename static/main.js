@@ -1,5 +1,11 @@
+
+
 // target elements with the "draggable" class
-interact('.draggable')
+interact('.card').on('tap', function (event) {
+         console.log("on tap");
+      });
+
+interact('.card')
   .draggable({
     // enable inertial throwing
     inertia: true,
@@ -25,7 +31,22 @@ interact('.draggable')
           'moved a distance of ' +
           (Math.sqrt(Math.pow(event.pageX - event.x0, 2) +
                      Math.pow(event.pageY - event.y0, 2) | 0))
-            .toFixed(2) + 'px')
+		   .toFixed(2) + 'px')
+
+	  const pos = {target: event.target.id};
+          // Send the position to the Flask backend
+          fetch('/drag_event', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pos),
+          })
+              .then(response => response.json())
+        .then(data => console.log(data))
+        .catch((error) => {
+            console.error('Error:', error);
+	})
       }
     }
   })
