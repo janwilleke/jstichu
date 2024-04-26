@@ -42,19 +42,11 @@ def alt():
 def anysocketexce():
     print("exception print start")
     exce = traceback.format_exc()
-    print(exce);
+    print(exce)
     emit('logmsg', {"data" : exce})
     print("exceotion print end")
     emit('logmsg', {"data" : "EXCEPTION -> Disconnect"})
     disconnect()
-
-@app.route('/drag_event', methods=['POST'])
-def drag_event():
-    data = request.json
-    print(f"Drag event received: {data}")
-    # Here you can handle the drag event, e.g., update a database or perform some action
-    return jsonify({"status": "success"})
-
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', debug=True)
