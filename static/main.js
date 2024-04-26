@@ -11,8 +11,8 @@ function startFunction() {
     });
 
     socket.on('move', function(msg, cb) {
-	console.log(msg.data);
-	const elem = document.getElementById(msg.id);
+	console.log(msg);
+	const elem = document.getElementById("card" + msg.num);
 	elem.style.transform = 'translate(' + msg.x + 'px, ' + msg.y + 'px)';
 	// update the posiion attributes
 	elem.setAttribute('data-x', msg.x);
@@ -22,7 +22,7 @@ function startFunction() {
     });
 
     socket.on('remove', function(msg, cb) {
-	console.log(msg.data);
+	console.log(msg);
 	const elem = document.getElementById(msg.id);
 	elem.remove();
 	if (cb)
@@ -30,11 +30,11 @@ function startFunction() {
     });
 
     socket.on('addcard', function(msg, cb) {
-	console.log(msg.data);
+	console.log(msg);
 	let cardnum = msg.num
 	const { suit, rank, color_style } = decodeCard(cardnum)
 	let div = document.createElement('div');
-	div.id = "asdf" + cardnum;
+	div.id = "card" + cardnum;
 	div.className = 'card';
 	div.textContent = rank + " " + suit;
 	document.body.appendChild(div);

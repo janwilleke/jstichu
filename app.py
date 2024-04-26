@@ -17,8 +17,11 @@ def index():
 def startweb():
     try:
         print("startweb")
-        emit('addcard', {"data": "add", "num": 0})
-        #emit('move', {"data": "MOVE", "id": "4a", "x": 50, "y": 50})
+        for i in range(0, 4):
+            for j in range(0, 14):
+                emit('addcard', {"num": j + i * 14 })
+                emit('move', {"num": j + i * 14, "x": 40 * j, "y": 100 + i * 90})
+
     except Exception:
         print("execption")
 
@@ -27,10 +30,10 @@ def moveele(message):
     try:
 
         print(f"move {message}")
-        if (message["target"] != "as"):
-#            emit('addcard', {"data": "add", "num": 0})
+        #if (message["target"] != "as"):
+        #            emit('addcard', {"data": "add", "num": 0})
 
-            emit('move', {"data": "MOVE", "id": "as", "x": 50, "y": 50})
+        #emit('move', {"data": "MOVE", "id": "as", "x": 50, "y": 50})
 
     except Exception:
         print("execption")
@@ -52,4 +55,4 @@ def anysocketexce():
     #disconnect()
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True)
+    socketio.run(app, host='0.0.0.0')
