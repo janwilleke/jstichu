@@ -1,31 +1,35 @@
-.draggable {
-    width: 2%;
-    min-height: 6.5em;
-    margin: 1rem 0 0 1rem;
-    background: #29e;
-    border-radius: 0.75em;
-    padding: 4%;
-    touch-action: none;
-    user-select: none;
-    transform: translate(0px, 0px);
-    border: 2px solid #e7e7e7;
-    font-size: 40px;
+.red-card {
+    color: #b82525;
 }
+
+.green-card {
+    color: #259c25;
+}
+
+.blue-card {
+    color: #2d47cc;
+}
+
+.black-card {
+    color: #2d2f3b;
+}
+
+.special-card {
+    color: goldenrod;
+}
+
 .card {
     border: 3px solid #0f0f0f;
     border-radius: 0.5em;
     min-height: 1.5em;
     margin: 1rem 0 0 1rem;
-    padding: 4%;
     touch-action: none;
     user-select: none;
     transform: translate(0px, 0px);
     padding: .5rem;
     font-size: 30px;
-
     position: absolute;
     width: 20px;
     height: 60px;
     background: #e4d3ef;
-    color: #0000f0
 }

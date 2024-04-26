@@ -37,6 +37,7 @@ function startFunction() {
 	div.id = "card" + cardnum;
 	div.className = 'card';
 	div.textContent = rank + " " + suit;
+	div.classList.add(color_style); // lockup inside css
 	document.body.appendChild(div);
 	if (cb)
 	    cb();
