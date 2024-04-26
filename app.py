@@ -1,5 +1,5 @@
 import eventlet
-
+import traceback
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
@@ -20,7 +20,7 @@ def startweb():
         for i in range(0, 4):
             for j in range(0, 14):
                 emit('addcard', {"num": j + i * 14 })
-                emit('move', {"num": j + i * 14, "x": 40 * j, "y": 100 + i * 90})
+                emit('move', {"num": j + i * 14, "x": 50 * j, "y": 100 + i * 90})
 
     except Exception:
         print("execption")
@@ -28,21 +28,24 @@ def startweb():
 @socketio.event
 def moveele(message):
     try:
-
         print(f"move {message}")
-        #if (message["target"] != "as"):
-        #            emit('addcard', {"data": "add", "num": 0})
-
-        #emit('move', {"data": "MOVE", "id": "as", "x": 50, "y": 50})
 
     except Exception:
         print("execption")
         anysocketexce()
+@socketio.event
+def pressed(message):
+    try:
+        print(f"pressed {message}")
+        card = message["card"][4]
+        x = message["x"]
+        y = message["y"]
+        print(f"num {card} x {x} y {y}")
+        emit('move', {"num": int(card), "x": int(x), "y": int(y) - 10})
 
-
-@app.route('/alt')
-def alt():
-    return render_template('alt.html')
+    except Exception:
+        print("execption")
+        anysocketexce()
 
 
 def anysocketexce():

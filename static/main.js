@@ -53,7 +53,12 @@ function startFunction() {
 
 // target elements with the "draggable" class
 interact('.card').on('tap', function (event) {
-         console.log("on tap");
+    console.log("on tap");
+    	  const pos = {card: event.target.id,
+		       x: event.target.getAttribute('data-x'),
+		       y: event.target.getAttribute('data-y')};
+	  socket.emit('pressed', pos);
+
       });
 
 interact('.card')
