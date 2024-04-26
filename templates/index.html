@@ -4,19 +4,21 @@
     <meta charset="UTF-8">
     <title>Interact.js Draggable Example</title>
     <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.27/dist/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
     <script src="/static/main.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 
-<body>
-    <div class="card"> 1 🐣</div>
-    <div class="card"> P 🦜</div>
-    <div class="card"> H 🐶</div>
-    <div class="card"> D 🐲</div>
-    <div class="card"> 7 ♥</div>
-    <div class="card"> 8 ♣</div>
-    <div class="card" style="color: #000044"> 9 ♦</div>
-    <div class="card" style="color: #44e044" > A ♠</div>
+<body onload="startFunction()">
+    <div class="card" id="1"> 1 🐣</div>
+    <div class="card" id="P"> P 🦜</div>
+    <div class="card" id="H"> H 🐶</div>
+    <div class="card" id="D"> D 🐲</div>
+    <div class="card" id="7r"> 7 ♥</div>
+    <div class="card" id="8k"> 8 ♣</div>
+    <div class="card" id="9x" style="color: #000044"> 9 ♦</div>
+    <div class="card" id="as" style="color: #44e044" > A ♠</div>
 
 </body>
 </html>

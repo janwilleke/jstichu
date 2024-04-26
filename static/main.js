@@ -1,3 +1,27 @@
+var socket
+function startFunction() {
+    // Connect to the Socket.IO server.
+    // The connection URL has the following format, relative to the current page:
+    //     http[s]://<domain>:<port>[/<namespace>]
+    socket = io();
+    socket.on('connect', function() {
+        socket.emit('startweb');
+    });
+    socket.on('move', function(msg, cb) {
+	console.log(msg.data);
+	const elem = document.getElementById(msg.id);
+	elem.style.transform = 'translate(' + msg.x + 'px, ' + msg.y + 'px)'
+
+	// update the posiion attributes
+	elem.setAttribute('data-x', msg.x)
+	elem.setAttribute('data-y', msg.y)
+
+	if (cb)
+	    cb();
+    });
+    console.log("started");
+
+}
 
 
 // target elements with the "draggable" class
@@ -12,7 +36,7 @@ interact('.card')
     // keep the element within the area of it's parent
     modifiers: [
       interact.modifiers.restrictRect({
-        restriction: 'parent',
+//        restriction: 'parent',
         endOnly: true
       })
     ],
@@ -25,28 +49,13 @@ interact('.card')
 
       // call this function on every dragend event
       end (event) {
-        var textEl = event.target.querySelector('p')
 
-        textEl && (textEl.textContent =
-          'moved a distance of ' +
-          (Math.sqrt(Math.pow(event.pageX - event.x0, 2) +
-                     Math.pow(event.pageY - event.y0, 2) | 0))
-		   .toFixed(2) + 'px')
-
-	  const pos = {target: event.target.id};
+	  const pos = {target: event.target.id,
+		       x: event.target.getAttribute('data-x'),
+		       y: event.target.getAttribute('data-y')};
+	  socket.emit('moveele', pos);
           // Send the position to the Flask backend
-          fetch('/drag_event', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(pos),
-          })
-              .then(response => response.json())
-        .then(data => console.log(data))
-        .catch((error) => {
-            console.error('Error:', error);
-	})
+
       }
     }
   })
