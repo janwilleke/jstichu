@@ -13,8 +13,8 @@ function rankFromNumber(number) {
     }
 }
 
-export default function decodeCard(card) {
-  const n = card.charCodeAt() - '0'.charCodeAt()
+function decodeCard(card) {
+  const n = card
   let suit, rank, color_style
 
   switch(n) {

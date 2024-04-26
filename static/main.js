@@ -1,3 +1,5 @@
+//import {decodeCard} from './DecodeCard.js'
+
 var socket
 function startFunction() {
     // Connect to the Socket.IO server.
@@ -7,20 +9,44 @@ function startFunction() {
     socket.on('connect', function() {
         socket.emit('startweb');
     });
+
     socket.on('move', function(msg, cb) {
 	console.log(msg.data);
 	const elem = document.getElementById(msg.id);
-	elem.style.transform = 'translate(' + msg.x + 'px, ' + msg.y + 'px)'
-
+	elem.style.transform = 'translate(' + msg.x + 'px, ' + msg.y + 'px)';
 	// update the posiion attributes
-	elem.setAttribute('data-x', msg.x)
-	elem.setAttribute('data-y', msg.y)
-
+	elem.setAttribute('data-x', msg.x);
+	elem.setAttribute('data-y', msg.y);
 	if (cb)
 	    cb();
     });
+
+    socket.on('remove', function(msg, cb) {
+	console.log(msg.data);
+	const elem = document.getElementById(msg.id);
+	elem.remove();
+	if (cb)
+	    cb();
+    });
+
+    socket.on('addcard', function(msg, cb) {
+	console.log(msg.data);
+	let cardnum = msg.num
+	const { suit, rank, color_style } = decodeCard(cardnum)
+	let div = document.createElement('div');
+	div.id = "asdf" + cardnum;
+	div.className = 'card';
+	div.textContent = rank + " " + suit;
+	document.body.appendChild(div);
+	if (cb)
+	    cb();
+    });
+
     console.log("started");
 
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    console.log(height, width); // 711 1440
 }
 
 

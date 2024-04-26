@@ -17,7 +17,8 @@ def index():
 def startweb():
     try:
         print("startweb")
-        #emit('move', {"data": "MOVE", "id": "as", "x": 50, "y": 50})
+        emit('addcard', {"data": "add", "num": 0})
+        #emit('move', {"data": "MOVE", "id": "4a", "x": 50, "y": 50})
     except Exception:
         print("execption")
 
@@ -27,6 +28,8 @@ def moveele(message):
 
         print(f"move {message}")
         if (message["target"] != "as"):
+#            emit('addcard', {"data": "add", "num": 0})
+
             emit('move', {"data": "MOVE", "id": "as", "x": 50, "y": 50})
 
     except Exception:
@@ -43,10 +46,10 @@ def anysocketexce():
     print("exception print start")
     exce = traceback.format_exc()
     print(exce)
-    emit('logmsg', {"data" : exce})
+    #emit('logmsg', {"data" : exce})
     print("exceotion print end")
-    emit('logmsg', {"data" : "EXCEPTION -> Disconnect"})
-    disconnect()
+    #emit('logmsg', {"data" : "EXCEPTION -> Disconnect"})
+    #disconnect()
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', debug=True)
