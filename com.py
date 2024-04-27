@@ -7,18 +7,42 @@ async def send_command(websocket, command, opts=None):
         opts = {}
     h = {'command': command}
     h.update(opts)
-    print("sending ===>")
-    print(h)
+    print(f"sending ===> {h}")
     await websocket.send(json.dumps(h))
 
 
-async def doplay(ws, data):
-    condition = None
-    print("<=<= received game state")
-    print(data)
+condition = None
 
-    if data.get('error'):
+
+async def doplay(ws, data):
+    global condition
+
+    print("<=<= received game state")
+    print(data.get('players')[0])
+    print(f'state: {data.get("state")}')
+    print(f'fertig geschoben: {not data.get('players')[0].get('passed_cards')}')
+    if condition is not None:
+        print(condition(data))
+    else:
+        print("condition is NULL")
+    print("--------------")
+
+    if data.get('state') == 'over':
+        print("its all over baby blue")
         exit()
+    if data.get('error'):
+        print(data.get('error'))
+        exit()
+
+    if condition is not None:
+        if condition(data):
+            condition = None
+        elif not data.get('error'):
+            print("...")
+            return
+        else:
+            print("return becase wait for condition")
+            return
 
     if data.get('state') == 'ready':
         if data.get('dealer') == 0:
@@ -34,7 +58,9 @@ async def doplay(ws, data):
     elif data.get('state') == 'playing':
         if data.get('turn') == 0:
             plays = list(data.get('players')[0].get('possible_plays').keys())
+            print(f'possible plays {plays}')
             play = plays[0] # Assuming sample() is not directly available for keys
+            print(f'possible play {play}')
             wish_rank = '7' if '1' in play else None
             await send_command(ws, 'play', {'cards': play, 'wish_rank': wish_rank});
             condition = lambda data: data.get('turn') != 0
@@ -45,14 +71,17 @@ async def doplay(ws, data):
         await ws.close()
 
 async def receive_json_messages():
-    uri = "ws://localhost:9292/connect?game_id=TESTI&player_id=7ZELP"
+    uri = "ws://localhost:9292/connect?game_id=TESTI&player_id=AJ679"
+    lock = asyncio.Lock()
+
     async with websockets.connect(uri) as websocket:
         while True:
             message = await websocket.recv()
             try:
                 # Attempt to parse the message as JSON
                 json_message = json.loads(message)
-                await doplay(websocket, json_message)
+                async with lock:
+                    await doplay(websocket, json_message)
                 #print(json_message)
             except json.JSONDecodeError:
                 print(f"Received non-JSON message: {message}")
