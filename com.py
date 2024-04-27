@@ -1,8 +1,11 @@
 import asyncio
 import websockets
 import json
+import sys
 
 async def send_command(websocket, command, opts=None):
+
+    global lastcmd
     if opts is None:
         opts = {}
     h = {'command': command}
@@ -19,8 +22,8 @@ async def doplay(ws, data):
 
     print("<=<= received game state")
     print(data.get('players')[0])
-    print(f'state: {data.get("state")}')
-    print(f'fertig geschoben: {not data.get('players')[0].get('passed_cards')}')
+    print(f'state: {data.get("state")} turn {data.get("turn")}')
+    print(f"fertig geschoben: {not not data.get('players')[0].get('passed_cards')}")
     if condition is not None:
         print(condition(data))
     else:
@@ -37,11 +40,8 @@ async def doplay(ws, data):
     if condition is not None:
         if condition(data):
             condition = None
-        elif not data.get('error'):
-            print("...")
-            return
         else:
-            print("return becase wait for condition")
+            print("...")
             return
 
     if data.get('state') == 'ready':
@@ -54,7 +54,8 @@ async def doplay(ws, data):
             condition = lambda data: data.get('players')[0].get('hand_size') == 14
         elif not data.get('players')[0].get('passed_cards'):
             await send_command(ws, 'pass_cards', {'cards': data.get('players')[0].get('hand')[0:3]});
-            condition = lambda data: not data.get('players')[0].get('passed_cards')
+            #condition = lambda data: not not data.get('players')[0].get('passed_cards')
+            condition = lambda data: data.get('turn') != None
     elif data.get('state') == 'playing':
         if data.get('turn') == 0:
             plays = list(data.get('players')[0].get('possible_plays').keys())
@@ -63,18 +64,24 @@ async def doplay(ws, data):
             print(f'possible play {play}')
             wish_rank = '7' if '1' in play else None
             await send_command(ws, 'play', {'cards': play, 'wish_rank': wish_rank});
-            condition = lambda data: data.get('turn') != 0
+            # don't hang if I dog it to myself
+            #condition = ->(data) { data['turn'] != 0 } unless play == '0' && data['players'][3]['hand_size'] == 0
+            if (play == '0' and data.get('players')[3].get('hand_size') == 0):
+                print("played dog")
+            else:
+                condition = lambda data: data.get('turn') != 0
         if data.get('turn') is None and data.get('trick_winner') == 0:
             await send_command(ws, 'claim', {'to_player': 1 if data.get('dragon_trick') else 0});
             condition = lambda data: data.get('turn') is not None
     elif data.get('state') == 'over':
         await ws.close()
 
-async def receive_json_messages():
-    uri = "ws://localhost:9292/connect?game_id=TESTI&player_id=AJ679"
-    lock = asyncio.Lock()
 
+async def receive_json_messages(player_id="test"):
+    uri = f"ws://localhost:9292/connect?game_id=TESTI&player_id={player_id}"
     async with websockets.connect(uri) as websocket:
+        print("nur einmal")
+        lock = asyncio.Lock()
         while True:
             message = await websocket.recv()
             try:
@@ -87,4 +94,5 @@ async def receive_json_messages():
                 print(f"Received non-JSON message: {message}")
 
 # Run the async function
-asyncio.get_event_loop().run_until_complete(receive_json_messages())
+print(sys.argv[1])
+asyncio.get_event_loop().run_until_complete(receive_json_messages(sys.argv[1]))
