@@ -54,19 +54,16 @@ async def doplay(ws, data):
             condition = lambda data: data.get('players')[0].get('hand_size') == 14
         elif not data.get('players')[0].get('passed_cards'):
             await send_command(ws, 'pass_cards', {'cards': data.get('players')[0].get('hand')[0:3]});
-            #condition = lambda data: not not data.get('players')[0].get('passed_cards')
             condition = lambda data: data.get('turn') != None
     elif data.get('state') == 'playing':
         if data.get('turn') == 0:
             plays = list(data.get('players')[0].get('possible_plays').keys())
             print(f'possible plays {plays}')
-            play = plays[0] # Assuming sample() is not directly available for keys
+            play = plays[0]  # so ist das eher defensiv - ich passe wenn es geht ;-) - das orginal spielt zufall
             print(f'possible play {play}')
             wish_rank = '7' if '1' in play else None
             await send_command(ws, 'play', {'cards': play, 'wish_rank': wish_rank});
-            # don't hang if I dog it to myself
-            #condition = ->(data) { data['turn'] != 0 } unless play == '0' && data['players'][3]['hand_size'] == 0
-            if (play == '0' and data.get('players')[3].get('hand_size') == 0):
+            if (play == '0' and data.get('players')[3].get('hand_size') == 0 and data.get('players')[2].get('hand_size') == 0):
                 print("played dog")
             else:
                 condition = lambda data: data.get('turn') != 0

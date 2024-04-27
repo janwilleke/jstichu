@@ -14,7 +14,10 @@ python com.py test
 python com.py test
 
 danach:
-python com.py [player_id - vom wget cmd]
+
+  python com.py [player_id - vom wget cmd]
+oder und zuschauen / mitspielen mit:
+  http://localhost:9292/?#TESTI:[player_id - vom wget cmd]
 
 
 
