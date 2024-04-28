@@ -1,6 +1,7 @@
 //import {decodeCard} from './DecodeCard.js'
 
 var socket
+var outSocket
 function startFunction() {
     // Connect to the Socket.IO server.
     // The connection URL has the following format, relative to the current page:
@@ -12,7 +13,7 @@ function startFunction() {
     });
 
     socket.on('move', function(msg, cb) {
-	console.log(msg);
+	//console.log(msg);
 	const elem = document.getElementById("card" + msg.num);
 	elem.style.transform = 'translate(' + msg.x + 'px, ' + msg.y + 'px)';
 	// update the posiion attributes
@@ -31,15 +32,22 @@ function startFunction() {
     });
 
     socket.on('addcard', function(msg, cb) {
-	console.log(msg);
+	//console.log(msg);
 	let cardnum = msg.num
-	const { suit, rank, color_style } = decodeCard(cardnum)
-	let div = document.createElement('div');
-	div.id = "card" + cardnum;
-	div.className = 'card';
-	div.textContent = rank + " " + suit;
-	div.classList.add(color_style); // lockup inside css
-	document.body.appendChild(div);
+
+	if (document.getElementById("card" + cardnum) || false) {
+	    //console.log("exists");
+	} else {
+	    let cardcode = String.fromCharCode(cardnum + 0x30)
+	    const { suit, rank, color_style } = decodeCard(cardnum)
+	    let div = document.createElement('div');
+	    div.id = "card" + cardnum;
+	    div.className = 'card';
+	    div.setAttribute('cardcode', cardcode);
+	    div.textContent = rank + " " + suit;
+	    div.classList.add(color_style); // lockup inside css
+	    document.body.appendChild(div);
+	}
 	if (cb)
 	    cb();
     });
@@ -49,13 +57,13 @@ function startFunction() {
     const height = window.innerHeight;
     const width = window.innerWidth;
     console.log(height, width); // 711 1440
-    const exampleSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=QTJ6U");
-    exampleSocket.onmessage = (event) => {
+    outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=QTJ6U");
+    outSocket.onmessage = (event) => {
 	socket.emit('client', event.data);
     };
     socket.on('toclient', function(msg, cb) {
 	console.log(msg);
-	exampleSocket.send(msg);
+	outSocket.send(msg);
     });
 
     var bottext = document.getElementById("bottext");
@@ -65,7 +73,7 @@ function startFunction() {
 	//socket.emit(button, {config: $('#config').val(),
 	//			 value: $('#value').val()});
 	console.log("button" + $('#bottext').val());
-	exampleSocket.send($('#bottext').val());
+	outSocket.send($('#bottext').val());
 	return false;
     });
 
@@ -118,10 +126,21 @@ interact('.card')
 interact('.dropzone').on('tap',function (event) {
     console.log("on tap drop zone");
     	  const pos = {card: event.target.id,
-		       x: event.target.getAttribute('data-x'),
-		       y: event.target.getAttribute('data-y')};
-	  socket.emit('pressed', pos);
-      });
+		       x: 0,
+		       y: 0};
+    socket.emit('pressed', pos);
+
+    const collection = document.getElementsByClassName("in-drop");
+    let s = "";
+    for (let i = 0; i < collection.length; i++) {
+	s = s + collection[i].getAttribute("cardcode");
+	collection[i].remove();
+    }
+    console.log(s)
+    // achtunf dicker fusch solle json funktion werden
+    outSocket.send('{"command": "play", "cards": "' + s + '", "wish_rank": null}');
+
+});
 
 interact('.dropzone').dropzone({
   // Require a 75% element overlap for a drop to be possible
@@ -137,19 +156,12 @@ interact('.dropzone').dropzone({
   ondragenter: function (event) {
     var draggableElement = event.relatedTarget
     var dropzoneElement = event.target
-      console.log("in");
-
-    // feedback the possibility of a drop
-//    dropzoneElement.classList.add('drop-target')
-      draggableElement.classList.add('can-drop')
-//    draggableElement.textContent = 'Dragged in'
+      //console.log("in");
+      draggableElement.classList.add('in-drop')
   },
     ondragleave: function (event) {
-	console.log("leave");
-    // remove the drop feedback style
-    //event.target.classList.remove('drop-target')
-	event.relatedTarget.classList.remove('can-drop')
-    //event.relatedTarget.textContent = 'Dragged out'
+	//console.log("leave");
+	event.relatedTarget.classList.remove('in-drop')
   },
 
   ondrop: function (event) {
