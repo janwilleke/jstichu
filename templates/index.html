@@ -13,6 +13,19 @@
 </head>
 
 <body onload="startFunction()">
+    <form id="rw" action="#" method="POST">
+      <input type="submit" value="Info" onclick="javascript:button = 'infodev'">
+      <select name="config" id="config">
+        <option value="" selected="selected">Select config</option>
+      </select>
+      <input type="submit" value="Read" onclick="javascript:button = 'readdev'">
+
+      <input type="number" id="value" name="value"
+	     min="0" max="1000">
+      <input type="submit" value="Write" onclick="javascript:button = 'writedev'">
+
+      <output id="statusrw" for="rw status"></output>
+    </form>
 
 </body>
 </html>
