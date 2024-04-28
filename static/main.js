@@ -48,6 +48,16 @@ function startFunction() {
     const height = window.innerHeight;
     const width = window.innerWidth;
     console.log(height, width); // 711 1440
+    const exampleSocket = new WebSocket("ws://localhost:9292/connect?game_id=TESTI&player_id=3R82K");
+    exampleSocket.onmessage = (event) => {
+	socket.emit('client', event.data);
+    };
+    socket.on('toclient', function(msg, cb) {
+	console.log(msg);
+	exampleSocket.send(msg);
+    });
+
+
 }
 
 

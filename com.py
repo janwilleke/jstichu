@@ -109,5 +109,6 @@ async def receive_json_messages(player_id="test"):
                 print(f"Received non-JSON message: {message}")
 
 # Run the async function
-print(sys.argv[1])
-asyncio.get_event_loop().run_until_complete(receive_json_messages(sys.argv[1]))
+if __name__ == '__main__':
+    print(sys.argv[1])
+    asyncio.get_event_loop().run_until_complete(receive_json_messages(sys.argv[1]))

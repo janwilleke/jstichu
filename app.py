@@ -1,5 +1,10 @@
+import asyncio
 import eventlet
 import traceback
+import com
+import json
+import sys
+
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
@@ -8,22 +13,57 @@ async_mode = "eventlet"
 
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
+loop = asyncio.get_event_loop()
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+botsays=""
+class comapp(com.bot):
+    global botsays
+    # here for debug
+    async def send_command_consol(self, command, opts={}):
+        h = {'command': command}
+        h.update(opts)
+        print(f"sending ===> {h}")
+        x = sys.stdin.readline().strip()
+        print(f'x-{x}- len{len(x)}')
+        if (len(x) > 0):
+            h['cards'] = x
+        print(f"sending user ===> {h}")
+        socketio.emit("toclient", json.dumps(h))
+    async def send_command(self, command, opts={}):
+        h = {'command': command}
+        h.update(opts)
+        print(f"bot wands sending ===> {h}")
+        botsays= json.dumps(h)
+
+bot = None
+
+@socketio.event
+def client(message):
+    try:
+        print(message)
+        loop.run_until_complete(bot.doplay(json.loads(message)))
+        # await bot.doplay(message)
+    except Exception:
+        anysocketexce()
+
+
 @socketio.event
 def startweb():
+    global bot
     try:
         print("startweb")
+        bot = comapp(None)
         for i in range(0, 4):
             for j in range(0, 14):
                 emit('addcard', {"num": j + i * 14 })
                 emit('move', {"num": j + i * 14, "x": 50 * j, "y": 100 + i * 90})
 
     except Exception:
-        print("execption")
+        anysocketexce()
 
 @socketio.event
 def moveele(message):
