@@ -5,6 +5,7 @@ function startFunction() {
     // Connect to the Socket.IO server.
     // The connection URL has the following format, relative to the current page:
     //     http[s]://<domain>:<port>[/<namespace>]
+
     socket = io();
     socket.on('connect', function() {
         socket.emit('startweb');
@@ -57,7 +58,20 @@ function startFunction() {
 	exampleSocket.send(msg);
     });
 
+    var bottext = document.getElementById("bottext");
 
+    $('form#rw').submit(function(event) {
+	//socket.emit('infodev', {device: $('#device').val(), func: button} );
+	//socket.emit(button, {config: $('#config').val(),
+	//			 value: $('#value').val()});
+	console.log("button" + $('#bottext').val());
+	exampleSocket.send($('#bottext').val());
+	return false;
+    });
+
+    socket.on('bottext', function(msg, cb) {
+	bottext.value = msg.text;
+    });
 }
 
 

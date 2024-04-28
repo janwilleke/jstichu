@@ -19,9 +19,7 @@ loop = asyncio.get_event_loop()
 def index():
     return render_template('index.html')
 
-botsays=""
 class comapp(com.bot):
-    global botsays
     # here for debug
     async def send_command_consol(self, command, opts={}):
         h = {'command': command}
@@ -37,15 +35,26 @@ class comapp(com.bot):
         h = {'command': command}
         h.update(opts)
         print(f"bot wands sending ===> {h}")
-        botsays= json.dumps(h)
-
+        socketio.emit("bottext", {"text": json.dumps(h)})
 bot = None
 
 @socketio.event
 def client(message):
     try:
-        print(message)
-        loop.run_until_complete(bot.doplay(json.loads(message)))
+
+        data = json.loads(message)
+        # print(data)
+        anzahl = data.get('players')[0].get('hand_size')
+        hand = data.get('players')[0].get('hand')
+        print(f'anzahl {anzahl} hand: {hand}')
+        i = 0
+        for ch in hand:
+            x = ord(ch) - ord('0')
+            print(f'char: {x}')
+            emit('addcard', {"num": x})
+            emit('move', {"num": x, "x": i, "y": 100})
+            i += 50
+        loop.run_until_complete(bot.doplay(data))
         # await bot.doplay(message)
     except Exception:
         anysocketexce()
@@ -57,10 +66,11 @@ def startweb():
     try:
         print("startweb")
         bot = comapp(None)
-        for i in range(0, 4):
-            for j in range(0, 14):
-                emit('addcard', {"num": j + i * 14 })
-                emit('move', {"num": j + i * 14, "x": 50 * j, "y": 100 + i * 90})
+
+        #for i in range(0, 4):
+        #    for j in range(0, 14):
+        #        emit('addcard', {"num": j + i * 14 })
+        #        emit('move', {"num": j + i * 14, "x": 50 * j, "y": 100 + i * 90})
 
     except Exception:
         anysocketexce()
