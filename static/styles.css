@@ -32,3 +32,16 @@
     height: 50px;
     background: #f8f0f0;
 }
+.dropzone {
+  background-color: #bfe4ff;
+  border: dashed 4px transparent;
+  border-radius: 4px;
+  margin: 10px auto 30px;
+  padding: 10px;
+  width: 80%;
+  height: 80px;
+  transition: background-color 0.3s;
+}
+.can-drop {
+  background-color: #4e4;
+}

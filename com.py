@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import json
 import sys
-
+import random
 
 class player:
     def __init__(self, websocket):
@@ -60,7 +60,7 @@ class bot(player):
             if data.get('turn') == 0:
                 plays = list(data.get('players')[0].get('possible_plays').keys())
                 print(f'possible plays {plays}')
-                play = plays[0]  # so ist das eher defensiv - ich passe wenn es geht ;-) - das orginal spielt zufall
+                play = random.choice(plays)
                 print(f'possible play {play}')
                 wish_rank = '7' if '1' in play else None
                 await self.send_command('play', {'cards': play, 'wish_rank': wish_rank});

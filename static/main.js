@@ -49,7 +49,7 @@ function startFunction() {
     const height = window.innerHeight;
     const width = window.innerWidth;
     console.log(height, width); // 711 1440
-    const exampleSocket = new WebSocket("ws://localhost:9292/connect?game_id=TESTI&player_id=3R82K");
+    const exampleSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=QTJ6U");
     exampleSocket.onmessage = (event) => {
 	socket.emit('client', event.data);
     };
@@ -115,6 +115,56 @@ interact('.card')
       }
     }
   })
+interact('.dropzone').on('tap',function (event) {
+    console.log("on tap drop zone");
+    	  const pos = {card: event.target.id,
+		       x: event.target.getAttribute('data-x'),
+		       y: event.target.getAttribute('data-y')};
+	  socket.emit('pressed', pos);
+      });
+
+interact('.dropzone').dropzone({
+  // Require a 75% element overlap for a drop to be possible
+  overlap: 0.75,
+
+  // listen for drop related events:
+
+  ondropactivate: function (event) {
+    // add active dropzone feedback
+      //event.target.classList.add('drop-active')
+      //console.log("hier 1");
+  },
+  ondragenter: function (event) {
+    var draggableElement = event.relatedTarget
+    var dropzoneElement = event.target
+      console.log("in");
+
+    // feedback the possibility of a drop
+//    dropzoneElement.classList.add('drop-target')
+      draggableElement.classList.add('can-drop')
+//    draggableElement.textContent = 'Dragged in'
+  },
+    ondragleave: function (event) {
+	console.log("leave");
+    // remove the drop feedback style
+    //event.target.classList.remove('drop-target')
+	event.relatedTarget.classList.remove('can-drop')
+    //event.relatedTarget.textContent = 'Dragged out'
+  },
+
+  ondrop: function (event) {
+      //event.relatedTarget.textContent = 'Dropped'
+      console.log("reingelegt");
+
+  },
+    ondropdeactivate: function (event) {
+	//console.log("hier 4");
+
+    // remove active dropzone feedback
+    //event.target.classList.remove('drop-active')
+    //event.target.classList.remove('drop-target')
+  }
+})
 
 function dragMoveListener (event) {
   var target = event.target
