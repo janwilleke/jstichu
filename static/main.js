@@ -1,20 +1,18 @@
 //import {decodeCard} from './DecodeCard.js'
 
-var socket
-var outSocket
-function startFunction() {
-    // Connect to the Socket.IO server.
-    // The connection URL has the following format, relative to the current page:
-    //     http[s]://<domain>:<port>[/<namespace>]
-    var port = 4088
-    searchParams = new URLSearchParams(window.location.search)
-    if (searchParams.has('port'))
-	port = searchParams.get('port');
-    console.log("port is " + port);
+var outSocket //json connection to the tichu server
 
-    socket = io();
-    socket.on('connect', function() {
-        socket.emit('startweb');
+function startFunction() {
+    var botsocket // anbindung an pythin - nur noch für den bot
+    var player_id = "test"
+    searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.has('player_id'))
+	player_id = searchParams.get('player_id');
+    console.log("option player:" + player_id);
+
+    botsocket = io();
+    botsocket.on('connect', function() {
+        botsocket.emit('startweb');
     });
 
     console.log("started");
@@ -22,14 +20,14 @@ function startFunction() {
     const height = window.innerHeight;
     const width = window.innerWidth;
     console.log(height, width); // 711 1440
-    // das muss wohl als option raus
-    outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=Y4AP9");
-
+    // horst und port als parameter wird auch mal interessanter
+    outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=" +
+			      player_id);
 
     outSocket.onmessage = (event) => {
 	parseincome(event.data);
     // --------------- BOT handler
-	socket.emit('client', event.data);
+	botsocket.emit('client', event.data);
     };
 
     var bottext = document.getElementById("bottext");
@@ -39,7 +37,7 @@ function startFunction() {
 	return false;
     });
 
-    socket.on('bottext', function(msg, cb) {
+    botsocket.on('bottext', function(msg, cb) {
 	bottext.value = msg.text;
     });
     // --------------- END BOT
