@@ -59,24 +59,25 @@ interact('.card').draggable({
 	move: dragMoveListener
     }
 })
+function totichuserver(cmd, addon={}) {
+    addon.command = cmd;
+    console.log(addon);
+    outSocket.send(JSON.stringify(addon));
+}
 
 interact('.dropzone').on('tap',function (event) {
-    console.log("on tap drop zone");
     const collection = document.getElementsByClassName("in-drop");
     let s = "";
-    for (let i = 0; i < collection.length; i++) {
-	s = s + collection[i].getAttribute("cardcode");
+
+    if (document.getElementById("tisch-dropzone").innerHTML == "aufheben") {
+	totichuserver("claim", {to_player: 0});
+    } else {
+	for (let i = 0; i < collection.length; i++) {
+	    s = s + collection[i].getAttribute("cardcode");
+	}
+	cleanallelementsclass("in-drop");
+	totichuserver("play", {cards: s, wish_rank: null});
     }
-
-    cleanallelementsclass("in-drop");
-
-    var message = {
-	"command": "play",
-	"cards": s,
-	"wish_rank": null
-    };
-    console.log(message)
-    outSocket.send(JSON.stringify(message));
 });
 
 interact('.dropzone').dropzone({
@@ -108,17 +109,15 @@ function printcards(hand, y, extraclass = null) {
 	    div.textContent = rank + " " + suit;
 	    div.classList.add(color_style); // lockup inside css
 	    document.body.appendChild(div);
-	    //const elem = document.getElementById("card" + msg.num);
 	    div.style.transform = 'translate(' + (i * 45) + 'px, ' + y + 'px)';
 	    div.setAttribute('data-x', i * 45);
-	    div.setAttribute('data-y', 100);
+	    div.setAttribute('data-y', y);
 	    if (extraclass != null)
 		div.classList.add(extraclass);
-
 	}
     }
-
 }
+
 function cleanallelementsclass(c) {
 	const collection = document.getElementsByClassName(c);
 	while (collection.length > 0) {
@@ -130,23 +129,31 @@ function parseincome(jdata) {
     let data = JSON.parse(jdata);
     let hand = data.players[0].hand;
     let lastplay = data.last_play || {cards: ""};
+    let error = data.error || null;
 
-    printcards(hand, 100);
+    if (error)
+	console.log(error);
+
+    printcards(hand, 10);
     if (lastplay.cards == "") {
-	console.log("clean them all");
 	cleanallelementsclass("played0");
 	cleanallelementsclass("played1");
 	cleanallelementsclass("played2");
 	cleanallelementsclass("played3");
     } else {
 	if (lastplay.player == 3)
-	    printcards(lastplay.cards, 250, "played3");
+	    printcards(lastplay.cards, 150, "played3");
 	if (lastplay.player == 2)
-	    printcards(lastplay.cards, 300, "played2");
+	    printcards(lastplay.cards, 200, "played2");
 	if (lastplay.player == 1)
-	    printcards(lastplay.cards, 350, "played1");
+	    printcards(lastplay.cards, 250, "played1");
 	if (lastplay.player == 0)
-	    printcards(lastplay.cards, 200, "played0");
+	    printcards(lastplay.cards, 100, "played0");
+    }
+    if (data['trick_winner'] == 0) {
+	document.getElementById("tisch-dropzone").innerHTML = "aufheben";
+    } else {
+	document.getElementById("tisch-dropzone").innerHTML = "legen";
     }
 }
 
