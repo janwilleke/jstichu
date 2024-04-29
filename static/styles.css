@@ -46,3 +46,15 @@
 .in-drop {
   background-color: #4e4;
 }
+.played0 {
+    background-color: #cc0;
+}
+.played1 {
+    background-color: #4ff;
+}
+.played2 {
+    background-color: #064;
+}
+.played3 {
+    background-color: #e44;
+}

@@ -6,6 +6,11 @@ function startFunction() {
     // Connect to the Socket.IO server.
     // The connection URL has the following format, relative to the current page:
     //     http[s]://<domain>:<port>[/<namespace>]
+    var port = 4088
+    searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.has('port'))
+	port = searchParams.get('port');
+    console.log("port is " + port);
 
     socket = io();
     socket.on('connect', function() {
@@ -20,13 +25,14 @@ function startFunction() {
     // das muss wohl als option raus
     outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=Y4AP9");
 
+
     outSocket.onmessage = (event) => {
-	socket.emit('client', event.data);
 	parseincome(event.data);
+    // --------------- BOT handler
+	socket.emit('client', event.data);
     };
 
     var bottext = document.getElementById("bottext");
-
     $('form#rw').submit(function(event) {
 	console.log("button" + $('#bottext').val());
 	outSocket.send($('#bottext').val());
@@ -36,6 +42,7 @@ function startFunction() {
     socket.on('bottext', function(msg, cb) {
 	bottext.value = msg.text;
     });
+    // --------------- END BOT
 }
 
 interact('.card').draggable({
@@ -51,13 +58,7 @@ interact('.card').draggable({
     autoScroll: true,
 
     listeners: {
-	// call this function on every dragmove event
-	move: dragMoveListener,
-
-	// call this function on every dragend event
-	end (event) {
-            // Send the position to the Flask backend
-	}
+	move: dragMoveListener
     }
 })
 
@@ -68,9 +69,9 @@ interact('.dropzone').on('tap',function (event) {
     for (let i = 0; i < collection.length; i++) {
 	s = s + collection[i].getAttribute("cardcode");
     }
-    while (collection.length > 0) {
-	collection[0].remove();
-    }
+
+    cleanallelementsclass("in-drop");
+
     var message = {
 	"command": "play",
 	"cards": s,
@@ -84,31 +85,16 @@ interact('.dropzone').dropzone({
     // Require a 75% element overlap for a drop to be possible
     overlap: 0.75,
 
-    // listen for drop related events:
-
     ondragenter: function (event) {
-	//var draggableElement = event.relatedTarget
-	//var dropzoneElement = event.target
 	event.relatedTarget.classList.add('in-drop')
     },
     ondragleave: function (event) {
 	event.relatedTarget.classList.remove('in-drop')
     },
-
-//    ondrop: function (event) {
-	//console.log("reingelegt");
-//    }
 })
 
-function parseincome(jdata) {
-    console.log(jdata);
-    let data = JSON.parse(jdata);
-    let anzahl = data.players[0].hand_size;
-    let hand = data.players[0].hand;
-    console.log(`anzahl ${anzahl} hand: ${hand}`);
-
-    // Iterate over the 'hand' string and convert each character to its ASCII value
-    for (let i = 0; i < hand.length; i++) {
+function printcards(hand, y, extraclass = null) {
+   for (let i = 0; i < hand.length; i++) {
 	let ch = hand[i];
 	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
 	//console.log(`char: ${cardnum}`);
@@ -125,10 +111,44 @@ function parseincome(jdata) {
 	    div.classList.add(color_style); // lockup inside css
 	    document.body.appendChild(div);
 	    //const elem = document.getElementById("card" + msg.num);
-	    div.style.transform = 'translate(' + (i * 45) + 'px, ' + 100 + 'px)';
+	    div.style.transform = 'translate(' + (i * 45) + 'px, ' + y + 'px)';
 	    div.setAttribute('data-x', i * 45);
 	    div.setAttribute('data-y', 100);
+	    if (extraclass != null)
+		div.classList.add(extraclass);
+
 	}
+    }
+
+}
+function cleanallelementsclass(c) {
+	const collection = document.getElementsByClassName(c);
+	while (collection.length > 0) {
+	    collection[0].remove();
+	}
+}
+
+function parseincome(jdata) {
+    let data = JSON.parse(jdata);
+    let hand = data.players[0].hand;
+    let lastplay = data.last_play || {cards: ""};
+
+    printcards(hand, 100);
+    if (lastplay.cards == "") {
+	console.log("clean them all");
+	cleanallelementsclass("played0");
+	cleanallelementsclass("played1");
+	cleanallelementsclass("played2");
+	cleanallelementsclass("played3");
+    } else {
+	if (lastplay.player == 3)
+	    printcards(lastplay.cards, 250, "played3");
+	if (lastplay.player == 2)
+	    printcards(lastplay.cards, 300, "played2");
+	if (lastplay.player == 1)
+	    printcards(lastplay.cards, 350, "played1");
+	if (lastplay.player == 0)
+	    printcards(lastplay.cards, 200, "played0");
     }
 }
 
