@@ -58,7 +58,7 @@ function startFunction() {
     const width = window.innerWidth;
     console.log(height, width); // 711 1440
     // das muss wohl als option raus
-    outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=QTJ6U");
+    outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=Y4AP9");
 
     outSocket.onmessage = (event) => {
 	socket.emit('client', event.data);

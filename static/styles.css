@@ -42,7 +42,7 @@
   height: 80px;
   transition: background-color 0.3s;
 }
-# farbe wenn in der karten lege box
+/* hintergrund farbe in der dropp zone */
 .in-drop {
   background-color: #4e4;
 }
