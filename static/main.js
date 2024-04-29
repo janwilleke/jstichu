@@ -107,7 +107,9 @@ interact('.dropzone').on('tap',function (event) {
     let s = "";
     for (let i = 0; i < collection.length; i++) {
 	s = s + collection[i].getAttribute("cardcode");
-	collection[i].remove();
+    }
+    while (collection.length > 0) {
+	collection[0].remove();
     }
     var message = {
 	"command": "play",
