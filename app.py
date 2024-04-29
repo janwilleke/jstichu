@@ -21,16 +21,6 @@ def index():
 
 class comapp(com.bot):
     # here for debug
-    async def send_command_consol(self, command, opts={}):
-        h = {'command': command}
-        h.update(opts)
-        print(f"sending ===> {h}")
-        x = sys.stdin.readline().strip()
-        print(f'x-{x}- len{len(x)}')
-        if (len(x) > 0):
-            h['cards'] = x
-        print(f"sending user ===> {h}")
-        socketio.emit("toclient", json.dumps(h))
     async def send_command(self, command, opts={}):
         h = {'command': command}
         h.update(opts)
@@ -66,35 +56,7 @@ def startweb():
     try:
         print("startweb")
         bot = comapp(None)
-
-        #for i in range(0, 4):
-        #    for j in range(0, 14):
-        #        emit('addcard', {"num": j + i * 14 })
-        #        emit('move', {"num": j + i * 14, "x": 50 * j, "y": 100 + i * 90})
-
     except Exception:
-        anysocketexce()
-
-@socketio.event
-def moveele(message):
-    try:
-        print(f"move {message}")
-
-    except Exception:
-        print("execption")
-        anysocketexce()
-@socketio.event
-def pressed(message):
-    try:
-        print(f"pressed {message}")
-        card = message["card"][4]
-        x = message["x"]
-        y = message["y"]
-        print(f"num {card} x {x} y {y}")
-        emit('move', {"num": int(card), "x": int(x), "y": int(y) - 10})
-
-    except Exception:
-        print("execption")
         anysocketexce()
 
 
