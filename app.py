@@ -15,6 +15,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, async_mode=async_mode)
 loop = asyncio.get_event_loop()
 
+# last task for python - do the bot string if js requests
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -33,19 +34,7 @@ def client(message):
     try:
 
         data = json.loads(message)
-        # print(data)
-        anzahl = data.get('players')[0].get('hand_size')
-        hand = data.get('players')[0].get('hand')
-        print(f'anzahl {anzahl} hand: {hand}')
-        i = 0
-        for ch in hand:
-            x = ord(ch) - ord('0')
-            print(f'char: {x}')
-            emit('addcard', {"num": x})
-            emit('move', {"num": x, "x": i, "y": 100})
-            i += 50
         loop.run_until_complete(bot.doplay(data))
-        # await bot.doplay(message)
     except Exception:
         anysocketexce()
 

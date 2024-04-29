@@ -12,46 +12,6 @@ function startFunction() {
         socket.emit('startweb');
     });
 
-    socket.on('move', function(msg, cb) {
-	//console.log(msg);
-	const elem = document.getElementById("card" + msg.num);
-	elem.style.transform = 'translate(' + msg.x + 'px, ' + msg.y + 'px)';
-	// update the posiion attributes
-	elem.setAttribute('data-x', msg.x);
-	elem.setAttribute('data-y', msg.y);
-	if (cb)
-	    cb();
-    });
-
-    socket.on('remove', function(msg, cb) {
-	console.log(msg);
-	const elem = document.getElementById(msg.id);
-	elem.remove();
-	if (cb)
-	    cb();
-    });
-
-    socket.on('addcard', function(msg, cb) {
-	//console.log(msg);
-	let cardnum = msg.num
-
-	if (document.getElementById("card" + cardnum) || false) {
-	    //console.log("exists");
-	} else {
-	    let cardcode = String.fromCharCode(cardnum + 0x30)
-	    const { suit, rank, color_style } = decodeCard(cardnum)
-	    let div = document.createElement('div');
-	    div.id = "card" + cardnum;
-	    div.className = 'card';
-	    div.setAttribute('cardcode', cardcode);
-	    div.textContent = rank + " " + suit;
-	    div.classList.add(color_style); // lockup inside css
-	    document.body.appendChild(div);
-	}
-	if (cb)
-	    cb();
-    });
-
     console.log("started");
 
     const height = window.innerHeight;
@@ -127,21 +87,49 @@ interact('.dropzone').dropzone({
     // listen for drop related events:
 
     ondragenter: function (event) {
-	var draggableElement = event.relatedTarget
-	var dropzoneElement = event.target
-	draggableElement.classList.add('in-drop')
+	//var draggableElement = event.relatedTarget
+	//var dropzoneElement = event.target
+	event.relatedTarget.classList.add('in-drop')
     },
     ondragleave: function (event) {
 	event.relatedTarget.classList.remove('in-drop')
     },
 
-    ondrop: function (event) {
+//    ondrop: function (event) {
 	//console.log("reingelegt");
-    }
+//    }
 })
 
-function parseincome(data) {
-    console.log(data);
+function parseincome(jdata) {
+    console.log(jdata);
+    let data = JSON.parse(jdata);
+    let anzahl = data.players[0].hand_size;
+    let hand = data.players[0].hand;
+    console.log(`anzahl ${anzahl} hand: ${hand}`);
+
+    // Iterate over the 'hand' string and convert each character to its ASCII value
+    for (let i = 0; i < hand.length; i++) {
+	let ch = hand[i];
+	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
+	//console.log(`char: ${cardnum}`);
+	if (document.getElementById("card" + cardnum) || false) {
+	    //console.log("exists");
+	} else { //add the card and move it
+	    let cardcode = String.fromCharCode(cardnum + 0x30)
+	    const { suit, rank, color_style } = decodeCard(cardnum)
+	    let div = document.createElement('div');
+	    div.id = "card" + cardnum;
+	    div.className = 'card';
+	    div.setAttribute('cardcode', cardcode);
+	    div.textContent = rank + " " + suit;
+	    div.classList.add(color_style); // lockup inside css
+	    document.body.appendChild(div);
+	    //const elem = document.getElementById("card" + msg.num);
+	    div.style.transform = 'translate(' + (i * 45) + 'px, ' + 100 + 'px)';
+	    div.setAttribute('data-x', i * 45);
+	    div.setAttribute('data-y', 100);
+	}
+    }
 }
 
 function dragMoveListener (event) {
