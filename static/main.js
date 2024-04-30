@@ -63,7 +63,7 @@ interact('.mycard').draggable({
 })
 function totichuserver(cmd, addon={}) {
     addon.command = cmd;
-    console.log(addon);
+    console.log("cmd to server" + JSON.stringify(addon));
     outSocket.send(JSON.stringify(addon));
 }
 
@@ -113,8 +113,6 @@ interact('.player').dropzone({
 
     },
     ondrop: function (event) {
-	//event.target.textContent = 'full'
-	console.log(event.target.id);
 	const cl = document.getElementsByClassName("player-links");
 	const cm = document.getElementsByClassName("player-mitte");
 	const cr = document.getElementsByClassName("player-rechts");
@@ -125,7 +123,6 @@ interact('.player').dropzone({
 	    s = s + cm[0].getAttribute("cardcode");
 	if (cr.length == 1)
 	    s = s + cr[0].getAttribute("cardcode");
-	console.log("schieben" + s.length);
 	if (s.length == 3) {
 	    totichuserver("pass_cards", {cards: s});
 	    cl[0].remove();
@@ -179,7 +176,7 @@ function parseincome(jdata) {
     if (error)
 	console.log(error);
 
-    printcards(hand, 10, "mycard");
+    printcards(hand, 0, "mycard");
     if (lastplay.cards == "") {
 	cleanallelementsclass("played0");
 	cleanallelementsclass("played1");
@@ -195,7 +192,14 @@ function parseincome(jdata) {
 	if (lastplay.player == 0)
 	    printcards(lastplay.cards, 100, "played0");
     }
-    if (data.state === 'passing') {
+
+    if (data.error) {
+        console.log(data.error);
+    }
+
+    if (data.state === 'over') {
+	document.getElementById("tisch-dropzone").innerHTML = "Spiel to ende";
+    } else if (data.state === 'passing') {
 	if (data.players[0].hand_size === 8) {
 	    document.getElementById("tisch-dropzone").innerHTML = "kein grosses tichu";
 	} else {
@@ -209,8 +213,6 @@ function parseincome(jdata) {
     } else {
 	document.getElementById("tisch-dropzone").innerHTML = "legen";
     }
-
-
 }
 
 function dragMoveListener (event) {
