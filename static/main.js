@@ -16,7 +16,6 @@ function startFunction() {
     });
 
     console.log("started");
-
     const height = window.innerHeight;
     const width = window.innerWidth;
     console.log(height, width); // 711 1440
@@ -26,6 +25,8 @@ function startFunction() {
 
     outSocket.onmessage = (event) => {
 	parseincome(event.data);
+	dobotcalc(JSON.parse(event.data));
+	//jsbot.doplay(event.data);
     // --------------- BOT handler
 	botsocket.emit('client', event.data);
     };
@@ -38,7 +39,8 @@ function startFunction() {
     });
 
     botsocket.on('bottext', function(msg, cb) {
-	bottext.value = msg.text;
+	console.log("bottest from python" + msg.text);
+	//bottext.value = msg.text;
     });
     // --------------- END BOT
 }
