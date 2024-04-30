@@ -70,9 +70,12 @@ function totichuserver(cmd, addon={}) {
 interact('.dropzone').on('tap',function (event) {
     const collection = document.getElementsByClassName("in-drop");
     let s = "";
-
-    if (document.getElementById("tisch-dropzone").innerHTML == "aufheben") {
+    if (document.getElementById("tisch-dropzone").innerHTML == "kein grosses tichu") {
+	totichuserver("back6");
+    } else if (document.getElementById("tisch-dropzone").innerHTML == "aufheben") {
 	totichuserver("claim", {to_player: 0});
+    } else if (document.getElementById("tisch-dropzone").innerHTML == "abgeben") {
+	totichuserver("claim", {to_player: 1});
     } else {
 	for (let i = 0; i < collection.length; i++) {
 	    s = s + collection[i].getAttribute("cardcode");
@@ -91,6 +94,44 @@ interact('.dropzone').dropzone({
     },
     ondragleave: function (event) {
 	event.relatedTarget.classList.remove('in-drop')
+    },
+})
+
+interact('.player').dropzone({
+    // Require a 75% element overlap for a drop to be possible
+    overlap: 0.75,
+
+    ondragenter: function (event) {
+	let boxid = event.target.id
+	event.relatedTarget.classList.add('player-drop')
+	event.relatedTarget.classList.add('player-' + boxid)
+    },
+    ondragleave: function (event) {
+	let boxid = event.target.id
+	event.relatedTarget.classList.remove('player-drop')
+	event.relatedTarget.classList.remove('player-' + boxid)
+
+    },
+    ondrop: function (event) {
+	//event.target.textContent = 'full'
+	console.log(event.target.id);
+	const cl = document.getElementsByClassName("player-links");
+	const cm = document.getElementsByClassName("player-mitte");
+	const cr = document.getElementsByClassName("player-rechts");
+	let s = "";
+	if (cl.length == 1)
+	    s = s + cl[0].getAttribute("cardcode");
+	if (cm.length == 1)
+	    s = s + cm[0].getAttribute("cardcode");
+	if (cr.length == 1)
+	    s = s + cr[0].getAttribute("cardcode");
+	console.log("schieben" + s.length);
+	if (s.length == 3) {
+	    totichuserver("pass_cards", {cards: s});
+	    cl[0].remove();
+	    cm[0].remove();
+	    cr[0].remove();
+	}
     },
 })
 
@@ -154,11 +195,22 @@ function parseincome(jdata) {
 	if (lastplay.player == 0)
 	    printcards(lastplay.cards, 100, "played0");
     }
-    if (data['trick_winner'] == 0) {
-	document.getElementById("tisch-dropzone").innerHTML = "aufheben";
+    if (data.state === 'passing') {
+	if (data.players[0].hand_size === 8) {
+	    document.getElementById("tisch-dropzone").innerHTML = "kein grosses tichu";
+	} else {
+	    document.getElementById("tisch-dropzone").innerHTML = "schiebe phase";
+	}
+    } else if (data['trick_winner'] == 0) {
+	if (data.dragon_trick)
+	    document.getElementById("tisch-dropzone").innerHTML = "abgeben";
+	else
+	    document.getElementById("tisch-dropzone").innerHTML = "aufheben";
     } else {
 	document.getElementById("tisch-dropzone").innerHTML = "legen";
     }
+
+
 }
 
 function dragMoveListener (event) {

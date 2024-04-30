@@ -27,7 +27,6 @@ function dobotcalc(data) {
         }
         if (data.error) {
             console.log(data.error);
-            process.exit();
         }
 
         if (condition !== null) {
