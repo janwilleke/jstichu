@@ -45,7 +45,7 @@ function startFunction() {
     // --------------- END BOT
 }
 
-interact('.card').draggable({
+interact('.mycard').draggable({
     // enable inertial throwing
     inertia: true,
     // keep the element within the area of it's parent
@@ -95,28 +95,30 @@ interact('.dropzone').dropzone({
 })
 
 function printcards(hand, y, extraclass = null) {
-   for (let i = 0; i < hand.length; i++) {
+    for (let i = 0; i < hand.length; i++) {
 	let ch = hand[i];
 	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
 	//console.log(`char: ${cardnum}`);
+        let div;
 	if (document.getElementById("card" + cardnum) || false) {
 	    //console.log("exists");
+	    div = document.getElementById("card" + cardnum);
 	} else { //add the card and move it
 	    let cardcode = String.fromCharCode(cardnum + 0x30)
 	    const { suit, rank, color_style } = decodeCard(cardnum)
-	    let div = document.createElement('div');
+	    div = document.createElement('div');
 	    div.id = "card" + cardnum;
 	    div.className = 'card';
 	    div.setAttribute('cardcode', cardcode);
 	    div.textContent = rank + " " + suit;
 	    div.classList.add(color_style); // lockup inside css
 	    document.body.appendChild(div);
-	    div.style.transform = 'translate(' + (i * 45) + 'px, ' + y + 'px)';
-	    div.setAttribute('data-x', i * 45);
-	    div.setAttribute('data-y', y);
 	    if (extraclass != null)
 		div.classList.add(extraclass);
 	}
+	div.style.transform = 'translate(' + (i * 45) + 'px, ' + y + 'px)';
+	div.setAttribute('data-x', i * 45);
+	div.setAttribute('data-y', y);
     }
 }
 
@@ -136,7 +138,7 @@ function parseincome(jdata) {
     if (error)
 	console.log(error);
 
-    printcards(hand, 10);
+    printcards(hand, 10, "mycard");
     if (lastplay.cards == "") {
 	cleanallelementsclass("played0");
 	cleanallelementsclass("played1");
