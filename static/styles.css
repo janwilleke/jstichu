@@ -1,9 +1,18 @@
+:root {
+    --global-green: #259c25; /* Define the color globally */
+    --global-player0: #cc0;
+    --global-player1: #4ff;
+    --global-player2: #064;
+    --global-player3: #e44;
+}
+
+
 .red-card {
     color: #b82525;
 }
 
 .green-card {
-    color: #259c25;
+    color: var(--global-green);
 }
 
 .blue-card {
@@ -56,16 +65,16 @@
 }
 
 .played0 {
-    background-color: #cc0;
+    background-color: var(--global-player0);
 }
 .played1 {
-    background-color: #4ff;
+    background-color: var(--global-player1);
 }
 .played2 {
-    background-color: #064;
+    background-color: var(--global-player2);
 }
 .played3 {
-    background-color: #e44;
+    background-color: var(--global-player3);
 }
 .div-container {
     display: grid;
@@ -80,10 +89,13 @@
     height: 98vh;
 
 }
-.gridl { grid-area: left; }
-.gridm { grid-area: mid; }
-.gridr { grid-area: right; }
+.gridl { grid-area: left;     background-color: var(--global-player1);
+}
+.gridm { grid-area: mid;     background-color: var(--global-player2);
+}
+.gridr { grid-area: right;     background-color: var(--global-player3);
+}
 .gridmain {grid-area: main; }
 .gridmenu {grid-area: menu;}
 
-.gridu { grid-area: footer; }
+.gridu { grid-area: footer;  background-color: #eeaeee}

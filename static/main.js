@@ -117,8 +117,24 @@ interact('.player').dropzone({
     },
 })
 
-function printcards(hand, into, y, extraclass = null) {
-    for (let i = 0; i < hand.length; i++) {
+function printcards(hand, into, y, extraclass = null, orient = "left") {
+    let wd = document.getElementById(into).offsetWidth;
+    let wh = document.getElementById(into).offsetHeight;
+    const dx = window.innerWidth / 14.2;
+    const count = hand.length;
+    let offx;
+
+    if (orient == "left")
+	offx = 0;
+    else if (orient == "right")
+	offx = wd - count * (dx + 1);
+    else
+	offx = (wd - count * (dx + 1)) / 2;
+    if (y == 1)
+	y = wh/2;
+
+    console.log(into + " = " +  wd + "x" + wh);
+    for (let i = 0; i < count; i++) {
 	let ch = hand[i];
 	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
         let div;
@@ -128,7 +144,6 @@ function printcards(hand, into, y, extraclass = null) {
 	    let cardcode = String.fromCharCode(cardnum + 0x30)
 	    const { suit, rank, color_style } = decodeCard(cardnum)
 	    div = document.createElement('div');
-	    console.log("card" + cardnum + " Into:" + into);
 	    div.id = "card" + cardnum;
 	    div.className = 'card';
 	    div.setAttribute('cardcode', cardcode);
@@ -139,10 +154,9 @@ function printcards(hand, into, y, extraclass = null) {
 	    if (extraclass != null)
 		div.classList.add(extraclass);
 	}
-	const dx = window.innerWidth / 14;
 
-	div.style.transform = 'translate(' + (i * dx) + 'px, ' + y + 'px)';
-	div.setAttribute('data-x', i * dx);
+	div.style.transform = 'translate(' + (offx + i * dx) + 'px, ' + y + 'px)';
+	div.setAttribute('data-x', offx + i * dx);
 	div.setAttribute('data-y', y);
     }
 }
@@ -159,25 +173,27 @@ function parseincome(jdata) {
     let hand = data.players[0].hand;
     let lastplay = data.last_play || {cards: ""};
     let error = data.error || null;
+    document.getElementById("mymenu").innerHTML = data.players[0].name;
+    /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
+    document.getElementById("linkstext").innerHTML = "links"  + data.players[3].name;
+    document.getElementById("mittetext").innerHTML = "mitte" + data.players[2].name;
+    document.getElementById("rechtstext").innerHTML = "rechts" + data.players[1].name;
 
-    if (error)
-	console.log(error);
-
-    printcards(hand, "mycards", 0, "mycard");
+    printcards(hand, "mycards", 0, "mycard", "center");
     if (lastplay.cards == "") {
 	cleanallelementsclass("played0");
 	cleanallelementsclass("played1");
 	cleanallelementsclass("played2");
 	cleanallelementsclass("played3");
     } else {
-	if (lastplay.player == 3)
-	    printcards(lastplay.cards, "tisch", 50, "played3");
+	if (lastplay.player == 1) /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
+	    printcards(lastplay.cards, "tisch", 0, "played3", "right");
 	if (lastplay.player == 2)
-	    printcards(lastplay.cards, "tisch", 100, "played2");
-	if (lastplay.player == 1)
-	    printcards(lastplay.cards, "tisch", 150, "played1");
+	    printcards(lastplay.cards, "tisch", 0, "played2", "left");
+	if (lastplay.player == 3)
+	    printcards(lastplay.cards, "tisch", 1, "played1", "left");
 	if (lastplay.player == 0)
-	    printcards(lastplay.cards, "tisch", 0, "played0");
+	    printcards(lastplay.cards, "tisch", 1, "played0", "right");
     }
 
     if (data.error) {
