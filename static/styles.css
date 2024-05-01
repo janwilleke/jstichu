@@ -37,10 +37,8 @@
   border: dashed 4px transparent;
   border-radius: 0.6em;
   transition: background-color 0.3s;
-  margin: 1%;
-  padding: 10px;
-
 }
+
 .player {
   background-color: #bfe40f;
   border: dashed 4px transparent;
@@ -72,18 +70,20 @@
 .div-container {
     display: grid;
     grid-template-areas:
-	'mid main  right'
-	'left main  right '
+	'mid main   right '
+	'left main  menu '
 	'footer footer footer  ';
     grid-template-columns: 1fr 8fr 1fr;
     grid-template-rows: 2.5fr 2.5fr 2fr;
     background-color: #efefef;
-    width: 100vw;
-    height: 97vh;
+    width: 98vw;
+    height: 98vh;
 
 }
 .gridl { grid-area: left; }
 .gridm { grid-area: mid; }
 .gridr { grid-area: right; }
-.gridmain { grid-area: main; }
+.gridmain {grid-area: main; }
+.gridmenu {grid-area: menu;}
+
 .gridu { grid-area: footer; }
