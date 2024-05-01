@@ -120,7 +120,7 @@ interact('.player').dropzone({
 function printcards(hand, into, y, extraclass = null, orient = "left") {
     let wd = document.getElementById(into).offsetWidth;
     let wh = document.getElementById(into).offsetHeight;
-    const dx = window.innerWidth / 14.2;
+    const dx = window.innerWidth / 14.5;
     const count = hand.length;
     let offx;
 
@@ -133,7 +133,6 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
     if (y == 1)
 	y = wh/2;
 
-    console.log(into + " = " +  wd + "x" + wh);
     for (let i = 0; i < count; i++) {
 	let ch = hand[i];
 	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
@@ -149,7 +148,6 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
 	    div.setAttribute('cardcode', cardcode);
 	    div.textContent = rank + " " + suit;
 	    div.classList.add(color_style); // lockup inside css
-	    //document.body.appendChild(div);
 	    document.getElementById(into).appendChild(div);
 	    if (extraclass != null)
 		div.classList.add(extraclass);
@@ -173,11 +171,21 @@ function parseincome(jdata) {
     let hand = data.players[0].hand;
     let lastplay = data.last_play || {cards: ""};
     let error = data.error || null;
+    if (data.turn == 0 ) {
+	document.getElementById("mymenu").style.backgroundColor = "#444444";
+    }
+    else {
+	document.getElementById("mymenu").style.backgroundColor = "";
+    }
     document.getElementById("mymenu").innerHTML = data.players[0].name;
+
     /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
-    document.getElementById("linkstext").innerHTML = "links"  + data.players[3].name;
-    document.getElementById("mittetext").innerHTML = "mitte" + data.players[2].name;
-    document.getElementById("rechtstext").innerHTML = "rechts" + data.players[1].name;
+    document.getElementById("linkstext").innerHTML = "links<br>"   + data.players[3].name + "<br>" + data.players[3].hand_size;
+    document.getElementById("mittetext").innerHTML = "mitte<br>"   + data.players[2].name + "<br>" + data.players[2].hand_size;
+    document.getElementById("rechtstext").innerHTML = "rechts<br>" + data.players[1].name + "<br>" + data.players[1].hand_size;
+    console.log(data.turn);
+
+
 
     printcards(hand, "mycards", 0, "mycard", "center");
     if (lastplay.cards == "") {
