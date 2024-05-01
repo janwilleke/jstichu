@@ -10,12 +10,6 @@ function startFunction() {
 	player_id = searchParams.get('player_id');
     console.log("option player:" + player_id);
 
-    botsocket = io();
-    botsocket.on('connect', function() {
-        botsocket.emit('startweb');
-    });
-
-    console.log("started");
     const height = window.innerHeight;
     const width = window.innerWidth;
     console.log(height, width); // 711 1440
@@ -26,9 +20,6 @@ function startFunction() {
     outSocket.onmessage = (event) => {
 	parseincome(event.data);
 	dobotcalc(JSON.parse(event.data));
-	//jsbot.doplay(event.data);
-    // --------------- BOT handler
-	botsocket.emit('client', event.data);
     };
 
     var bottext = document.getElementById("bottext");
@@ -37,12 +28,6 @@ function startFunction() {
 	outSocket.send($('#bottext').val());
 	return false;
     });
-
-    botsocket.on('bottext', function(msg, cb) {
-	console.log("bottest from python" + msg.text);
-	//bottext.value = msg.text;
-    });
-    // --------------- END BOT
 }
 
 interact('.mycard').draggable({
@@ -136,12 +121,10 @@ function printcards(hand, y, extraclass = null) {
     for (let i = 0; i < hand.length; i++) {
 	let ch = hand[i];
 	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
-	//console.log(`char: ${cardnum}`);
         let div;
 	if (document.getElementById("card" + cardnum) || false) {
-	    //console.log("exists");
-	    div = document.getElementById("card" + cardnum);
-	} else { //add the card and move it
+	    div = document.getElementById("card" + cardnum); // only move
+	} else { // add the card
 	    let cardcode = String.fromCharCode(cardnum + 0x30)
 	    const { suit, rank, color_style } = decodeCard(cardnum)
 	    div = document.createElement('div');
