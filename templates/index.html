@@ -14,28 +14,30 @@
 </head>
 
 <body onload="startFunction()">
-    <form id="rw" action="#" method="POST">
 
-      <input type="text" id="bottext" name="bottext" size="50">
-      <input type="submit" value="dobot">
-
-      <output id="statusrw" for="rw status"></output>
-    </form>
 <div class="div-container">
-    <div id="links" class="player">
+    <div id="links" class="player gridl">
       links
     </div>
-    <div id="mitte" class="player">
+    <div id="mitte" class="player gridm">
       mitte
     </div>
-    <div id="rechts" class="player">
+    <div id="rechts" class="player gridr">
       rechts
     </div>
-    <div id="tisch-dropzone" class="dropzone">
-      lege karte digger
+    <div id="tisch" class="dropzone gridmain">
+      <div id="todo"> lege karte digger </div>
     </div>
-
+    <div id="mycards" class="dridu">
+    </div>
 </div>
 
+<form id="rw" action="#" method="POST">
+
+  <input type="text" id="bottext" name="bottext" size="50">
+  <input type="submit" value="dobot">
+
+  <output id="statusrw" for="rw status"></output>
+</form>
 </body>
 </html>

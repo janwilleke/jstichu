@@ -26,32 +26,27 @@
     user-select: none;
     transform: translate(0px, 0px);
     padding: .5rem;
-    font-size: 20px;
+    font-size: 10vh;
     position: absolute;
-    width: 20px;
-    height: 50px;
+    width: 5vw;
+    height: 25vh;
     background: #f8f0f0;
 }
 .dropzone {
   background-color: #bfe4ff;
   border: dashed 4px transparent;
   border-radius: 0.6em;
-  margin: 10px auto 30px;
-  padding: 10px;
-  width: 70%;
-  height: 80px;
-  flex-basis: 90%;
   transition: background-color 0.3s;
+  margin: 1%;
+  padding: 10px;
+
 }
 .player {
   background-color: #bfe40f;
   border: dashed 4px transparent;
   border-radius: 0.6em;
-  margin: 10px auto 30px;
   padding: 10px;
-  height: 60px;
   transition: background-color 0.3s;
-  flex: 1 1 20%;
   margin: 1%; /* Fügt Abstände zwischen den div-Elementen hinzu */
 }
 /* hintergrund farbe in der dropp zone */
@@ -75,8 +70,20 @@
     background-color: #e44;
 }
 .div-container {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    margin: 1%; /* Fügt Abstände zwischen den div-Elementen hinzu */
+    display: grid;
+    grid-template-areas:
+	'mid main  right'
+	'left main  right '
+	'footer footer footer  ';
+    grid-template-columns: 1fr 8fr 1fr;
+    grid-template-rows: 2.5fr 2.5fr 2fr;
+    background-color: #efefef;
+    width: 100vw;
+    height: 97vh;
+
 }
+.gridl { grid-area: left; }
+.gridm { grid-area: mid; }
+.gridr { grid-area: right; }
+.gridmain { grid-area: main; }
+.gridu { grid-area: footer; }

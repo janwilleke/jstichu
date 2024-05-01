@@ -55,11 +55,11 @@ function totichuserver(cmd, addon={}) {
 interact('.dropzone').on('tap',function (event) {
     const collection = document.getElementsByClassName("in-drop");
     let s = "";
-    if (document.getElementById("tisch-dropzone").innerHTML == "kein grosses tichu") {
+    if (document.getElementById("todo").innerHTML == "kein grosses tichu") {
 	totichuserver("back6");
-    } else if (document.getElementById("tisch-dropzone").innerHTML == "aufheben") {
+    } else if (document.getElementById("todo").innerHTML == "aufheben") {
 	totichuserver("claim", {to_player: 0});
-    } else if (document.getElementById("tisch-dropzone").innerHTML == "abgeben") {
+    } else if (document.getElementById("todo").innerHTML == "abgeben") {
 	totichuserver("claim", {to_player: 1});
     } else {
 	for (let i = 0; i < collection.length; i++) {
@@ -117,7 +117,7 @@ interact('.player').dropzone({
     },
 })
 
-function printcards(hand, y, extraclass = null) {
+function printcards(hand, into, y, extraclass = null) {
     for (let i = 0; i < hand.length; i++) {
 	let ch = hand[i];
 	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
@@ -128,17 +128,21 @@ function printcards(hand, y, extraclass = null) {
 	    let cardcode = String.fromCharCode(cardnum + 0x30)
 	    const { suit, rank, color_style } = decodeCard(cardnum)
 	    div = document.createElement('div');
+	    console.log("card" + cardnum + " Into:" + into);
 	    div.id = "card" + cardnum;
 	    div.className = 'card';
 	    div.setAttribute('cardcode', cardcode);
 	    div.textContent = rank + " " + suit;
 	    div.classList.add(color_style); // lockup inside css
-	    document.body.appendChild(div);
+	    //document.body.appendChild(div);
+	    document.getElementById(into).appendChild(div);
 	    if (extraclass != null)
 		div.classList.add(extraclass);
 	}
-	div.style.transform = 'translate(' + (i * 45) + 'px, ' + y + 'px)';
-	div.setAttribute('data-x', i * 45);
+	const dx = window.innerWidth / 14;
+
+	div.style.transform = 'translate(' + (i * dx) + 'px, ' + y + 'px)';
+	div.setAttribute('data-x', i * dx);
 	div.setAttribute('data-y', y);
     }
 }
@@ -159,7 +163,7 @@ function parseincome(jdata) {
     if (error)
 	console.log(error);
 
-    printcards(hand, 0, "mycard");
+    printcards(hand, "mycards", 0, "mycard");
     if (lastplay.cards == "") {
 	cleanallelementsclass("played0");
 	cleanallelementsclass("played1");
@@ -167,13 +171,13 @@ function parseincome(jdata) {
 	cleanallelementsclass("played3");
     } else {
 	if (lastplay.player == 3)
-	    printcards(lastplay.cards, 150, "played3");
+	    printcards(lastplay.cards, "tisch", 50, "played3");
 	if (lastplay.player == 2)
-	    printcards(lastplay.cards, 200, "played2");
+	    printcards(lastplay.cards, "tisch", 100, "played2");
 	if (lastplay.player == 1)
-	    printcards(lastplay.cards, 250, "played1");
+	    printcards(lastplay.cards, "tisch", 150, "played1");
 	if (lastplay.player == 0)
-	    printcards(lastplay.cards, 100, "played0");
+	    printcards(lastplay.cards, "tisch", 0, "played0");
     }
 
     if (data.error) {
@@ -181,20 +185,20 @@ function parseincome(jdata) {
     }
 
     if (data.state === 'over') {
-	document.getElementById("tisch-dropzone").innerHTML = "Spiel to ende";
+	document.getElementById("todo").innerHTML = "Spiel to ende";
     } else if (data.state === 'passing') {
 	if (data.players[0].hand_size === 8) {
-	    document.getElementById("tisch-dropzone").innerHTML = "kein grosses tichu";
+	    document.getElementById("todo").innerHTML = "kein grosses tichu";
 	} else {
-	    document.getElementById("tisch-dropzone").innerHTML = "schiebe phase";
+	    document.getElementById("todo").innerHTML = "schiebe phase";
 	}
     } else if (data['trick_winner'] == 0) {
 	if (data.dragon_trick)
-	    document.getElementById("tisch-dropzone").innerHTML = "abgeben";
+	    document.getElementById("todo").innerHTML = "abgeben";
 	else
-	    document.getElementById("tisch-dropzone").innerHTML = "aufheben";
+	    document.getElementById("todo").innerHTML = "aufheben";
     } else {
-	document.getElementById("tisch-dropzone").innerHTML = "legen";
+	document.getElementById("todo").innerHTML = "legen";
     }
 }
 
