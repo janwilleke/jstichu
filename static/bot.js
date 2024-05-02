@@ -14,10 +14,12 @@ function dobotcalc(data) {
                 return;
             }
         }
-
+    if (data.can_join == true) {
+	send_command('join', {name: 'Heinz'})
+    }
         if (data.state === 'ready') {
             if (data.dealer === 0) {
-                send_command('deal');
+                send_command('deal'); // 'rotate_teams' to change pos
                 condition = (data) => data.state !== 'ready';
             }
         } else if (data.state === 'passing') {

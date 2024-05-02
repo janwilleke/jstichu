@@ -4,15 +4,44 @@ var outSocket //json connection to the tichu server
 
 function startFunction() {
     var botsocket // anbindung an pythin - nur noch für den bot
-    var player_id = "test"
+    var player_id = null
+    var game_id = null
     searchParams = new URLSearchParams(window.location.search)
     if (searchParams.has('player_id'))
 	player_id = searchParams.get('player_id');
-    console.log("option player:" + player_id);
+    if (searchParams.has('game_id'))
+	game_id = searchParams.get('game_id');
+    console.log("option player:" + player_id + "game:" + game_id);
 
     // horst und port als parameter wird auch mal interessanter
-    outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=" +
-			      player_id);
+    var cns = "ws://192.168.178.152:9292/connect";
+    if (game_id != null) {
+	cns = cns + "?game_id=" + game_id + "&player_id=";
+        if (player_id != null) cns = cns + player_id;
+    }
+
+    outSocket = new WebSocket(cns);
+    console.log("after try to connect");
+    outSocket.addEventListener('error', (event) => {
+	console.log('WebSocket connection failed:', event);
+	// wget -q -O - --post-data 'name=Peter&end_score=1000 ' http://localhost:9292/ne
+	var url = "/new";
+	fetch(url, {
+	    method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: "Peter", end_score: 1000})
+	}).then(response => response.json())
+            .then(data => {
+		console.log(data);
+		window.location.href = "http://localhost:5000?game_id=" +
+		    data.game_id + "&player_id=" + data.player_id;
+	    })
+            .catch(error => console.error('Error fetching data:', error));
+
+    });
+
 
     outSocket.onmessage = (event) => {
 	parseincome(event.data);
@@ -96,11 +125,11 @@ interact('.player').dropzone({
 	const cm = document.getElementsByClassName("player-mitte");
 	const cr = document.getElementsByClassName("player-rechts");
 	let s = "";
-	if (cl.length == 1)
+	if (cr.length == 1)
 	    s = s + cl[0].getAttribute("cardcode");
 	if (cm.length == 1)
 	    s = s + cm[0].getAttribute("cardcode");
-	if (cr.length == 1)
+	if (cl.length == 1)
 	    s = s + cr[0].getAttribute("cardcode");
 	if (s.length == 3) {
 	    totichuserver("pass_cards", {cards: s});
@@ -165,6 +194,18 @@ function parseincome(jdata) {
     let hand = data.players[0].hand;
     let lastplay = data.last_play || {cards: ""};
     let error = data.error || null;
+
+    if (data.player_id) {
+	// refresh the url - to save the player_id - in case restart
+	document.location.search = "game_id=" +
+	    data.id + "&player_id=" + data.player_id;
+    }
+
+    if (data.can_join == true) {
+	document.getElementById("todo").innerHTML = "please Join";
+	return
+    }
+
     if (data.turn == 0 ) {
 	document.getElementById("mymenu").style.backgroundColor = "#444444";
     } else {
@@ -173,9 +214,12 @@ function parseincome(jdata) {
     document.getElementById("mymenu").innerHTML = data.players[0].name;
 
     /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
-    document.getElementById("linkstext").innerHTML = "links<br>"   + data.players[3].name + "<br>" + data.players[3].hand_size;
-    document.getElementById("mittetext").innerHTML = "mitte<br>"   + data.players[2].name + "<br>" + data.players[2].hand_size;
-    document.getElementById("rechtstext").innerHTML = "rechts<br>" + data.players[1].name + "<br>" + data.players[1].hand_size;
+    if (data.players.length > 3)
+	document.getElementById("linkstext").innerHTML = "links<br>"   + data.players[3].name + "<br>" + data.players[3].hand_size;
+    if (data.players.length > 2)
+	document.getElementById("mittetext").innerHTML = "mitte<br>"   + data.players[2].name + "<br>" + data.players[2].hand_size;
+    if (data.players.length > 1)
+	document.getElementById("rechtstext").innerHTML = "rechts<br>" + data.players[1].name + "<br>" + data.players[1].hand_size;
 
     printcards(hand, "mycards", 0, "mycard", "center");
     if (lastplay.cards == "") {
