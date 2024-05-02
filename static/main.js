@@ -88,14 +88,11 @@ interact('.player').dropzone({
 
     ondragenter: function (event) {
 	let boxid = event.target.id
-	event.relatedTarget.classList.add('player-drop')
 	event.relatedTarget.classList.add('player-' + boxid)
     },
     ondragleave: function (event) {
 	let boxid = event.target.id
-	event.relatedTarget.classList.remove('player-drop')
 	event.relatedTarget.classList.remove('player-' + boxid)
-
     },
     ondrop: function (event) {
 	const cl = document.getElementsByClassName("player-links");

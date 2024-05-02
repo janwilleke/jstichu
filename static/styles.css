@@ -61,9 +61,16 @@
   background-color: #4e4;
 }
 .player-drop {
-  background-color: #fe4;
 }
-
+.player-links {
+   background-color: var(--global-player1);
+}
+.player-mitte {
+   background-color: var(--global-player2);
+}
+.player-rechts {
+   background-color: var(--global-player3);
+}
 .played0 {
     background-color: var(--global-player0);
 }
@@ -76,6 +83,7 @@
 .played3 {
     background-color: var(--global-player3);
 }
+
 .div-container {
     display: grid;
     grid-template-areas:
@@ -87,8 +95,8 @@
     background-color: #efefef;
     width: 98vw;
     height: 98vh;
-
 }
+
 .gridl { grid-area: left;     background-color: var(--global-player1);
 }
 .gridm { grid-area: mid;     background-color: var(--global-player2);
