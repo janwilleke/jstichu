@@ -10,9 +10,6 @@ function startFunction() {
 	player_id = searchParams.get('player_id');
     console.log("option player:" + player_id);
 
-    const height = window.innerHeight;
-    const width = window.innerWidth;
-    console.log(height, width); // 711 1440
     // horst und port als parameter wird auch mal interessanter
     outSocket = new WebSocket("ws://192.168.178.152:9292/connect?game_id=TESTI&player_id=" +
 			      player_id);
@@ -170,8 +167,7 @@ function parseincome(jdata) {
     let error = data.error || null;
     if (data.turn == 0 ) {
 	document.getElementById("mymenu").style.backgroundColor = "#444444";
-    }
-    else {
+    } else {
 	document.getElementById("mymenu").style.backgroundColor = "";
     }
     document.getElementById("mymenu").innerHTML = data.players[0].name;
@@ -180,9 +176,6 @@ function parseincome(jdata) {
     document.getElementById("linkstext").innerHTML = "links<br>"   + data.players[3].name + "<br>" + data.players[3].hand_size;
     document.getElementById("mittetext").innerHTML = "mitte<br>"   + data.players[2].name + "<br>" + data.players[2].hand_size;
     document.getElementById("rechtstext").innerHTML = "rechts<br>" + data.players[1].name + "<br>" + data.players[1].hand_size;
-    console.log(data.turn);
-
-
 
     printcards(hand, "mycards", 0, "mycard", "center");
     if (lastplay.cards == "") {
