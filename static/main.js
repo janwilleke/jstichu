@@ -126,11 +126,11 @@ interact('.player').dropzone({
 	const cr = document.getElementsByClassName("player-rechts");
 	let s = "";
 	if (cr.length == 1)
-	    s = s + cl[0].getAttribute("cardcode");
+	    s = s + cr[0].getAttribute("cardcode");
 	if (cm.length == 1)
 	    s = s + cm[0].getAttribute("cardcode");
 	if (cl.length == 1)
-	    s = s + cr[0].getAttribute("cardcode");
+	    s = s + cl[0].getAttribute("cardcode");
 	if (s.length == 3) {
 	    totichuserver("pass_cards", {cards: s});
 	    cl[0].remove();
