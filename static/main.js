@@ -140,6 +140,41 @@ interact('.player').dropzone({
     },
 })
 
+function pressbutton(event){
+    let buttonid = event.target.id
+    console.log(buttonid);
+    if (buttonid == "join") {
+	var namefield = document.getElementById("namefield");
+	totichuserver(event.target.id, {name: namefield.value});
+    } else {
+	totichuserver(event.target.id);
+    }
+}
+
+function addbutton(into, name) {
+    // Create the input element
+    var inputElement = document.createElement('input');
+
+    // Set the ID, type, and value of the input element
+    inputElement.setAttribute('id', name);
+    inputElement.setAttribute('type', 'button');
+    inputElement.value = name;
+
+    // Add the onclick event handler
+    inputElement.addEventListener('click', pressbutton);
+
+    // Append the input element to the body of the document
+    document.getElementById(into).appendChild(inputElement);
+
+}
+function addtext(into, name) {
+    var textele = document.createElement('input');
+    textele.setAttribute("id", name);
+    textele.setAttribute("size", "50");
+    textele.setAttribute('type', 'text');
+
+    document.getElementById(into).appendChild(textele);
+}
 function printcards(hand, into, y, extraclass = null, orient = "left") {
     let wd = document.getElementById(into).offsetWidth;
     let wh = document.getElementById(into).offsetHeight;
@@ -203,23 +238,30 @@ function parseincome(jdata) {
 
     if (data.can_join == true) {
 	document.getElementById("todo").innerHTML = "please Join";
+	addtext("mymenu", "namefield");
+
+	addbutton("mymenu", "join");
 	return
     }
-
+    document.getElementById("mymenu").innerHTML = data.players[0].name + "<br>" +
+	data.players[0].tichu + "<br>";
+    if (data.state === 'ready') {
+	addbutton("mymenu", "deal");
+	addbutton("mymenu", "rotate_teams");
+    }
     if (data.turn == 0 ) {
 	document.getElementById("mymenu").style.backgroundColor = "#444444";
     } else {
 	document.getElementById("mymenu").style.backgroundColor = "";
     }
-    document.getElementById("mymenu").innerHTML = data.players[0].name;
 
     /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
     if (data.players.length > 3)
-	document.getElementById("linkstext").innerHTML = "links<br>"   + data.players[3].name + "<br>" + data.players[3].hand_size;
+	document.getElementById("linkstext").innerHTML = "links<br>"   + data.players[3].name + "<br>" + data.players[3].hand_size + "<br>" + data.players[3].tichu;
     if (data.players.length > 2)
-	document.getElementById("mittetext").innerHTML = "mitte<br>"   + data.players[2].name + "<br>" + data.players[2].hand_size;
+	document.getElementById("mittetext").innerHTML = "mitte<br>"   + data.players[2].name + "<br>" + data.players[2].hand_size + "<br>" + data.players[2].tichu;
     if (data.players.length > 1)
-	document.getElementById("rechtstext").innerHTML = "rechts<br>" + data.players[1].name + "<br>" + data.players[1].hand_size;
+	document.getElementById("rechtstext").innerHTML = "rechts<br>" + data.players[1].name + "<br>" + data.players[1].hand_size + "<br>" + data.players[1].tichu;
 
     printcards(hand, "mycards", 0, "mycard", "center");
     if (lastplay.cards == "") {
@@ -241,12 +283,19 @@ function parseincome(jdata) {
     if (data.error) {
         console.log(data.error);
     }
+    if (data.players[0].can_gt)
+	addbutton("mymenu", "grand_tichu");
+    if (data.players[0].can_tichu)
+	addbutton("mymenu", "tichu");
 
     if (data.state === 'over') {
 	document.getElementById("todo").innerHTML = "Spiel to ende";
+	addbutton("mymenu", "New Game");
+
     } else if (data.state === 'passing') {
 	if (data.players[0].hand_size === 8) {
 	    document.getElementById("todo").innerHTML = "kein grosses tichu";
+
 	} else {
 	    document.getElementById("todo").innerHTML = "schiebe phase";
 	}
