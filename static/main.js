@@ -1,6 +1,6 @@
 //import {decodeCard} from './DecodeCard.js'
 
-var outSocket //json connection to the tichu server
+var outSocket; //json connection to the tichu server
 
 function startFunction() {
     var botsocket // anbindung an pythin - nur noch für den bot

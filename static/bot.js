@@ -2,8 +2,15 @@ var condition = null;
 
 function send_command(command, payload = {}) {
     var bottext = document.getElementById("bottext");
+    var input = document.getElementById('toggleswitch');
+
     payload.command = command;
     bottext.value = JSON.stringify(payload);
+    if (input.checked) {
+	console.log("autoplay");
+	outSocket.send(JSON.stringify(payload));
+
+    }
 }
 
 function dobotcalc(data) {
