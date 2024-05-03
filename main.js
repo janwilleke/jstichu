@@ -125,7 +125,7 @@ interact('.table').dropzone({
 	if (event.relatedTarget.id == "card1") {
 	    const wishTypes = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K', '-'];
 	    for (let i = 0; i < wishTypes.length; i++)
-		addbutton("wish", wishTypes[i], wishButton, "wishbutton");
+		addbutton("wish", wishTypes[i], wishbutton, "wishbutton");
 	}
     },
     ondragleave: function (event) {
@@ -312,7 +312,10 @@ function parseincome(jdata) {
 	let ele = document.getElementById(position + "text");
         ele.innerHTML = `${position}<br>${player.name}<br>${player.hand_size}<br>${player.tichu}`;
     }
-
+    if (data.state == 'passing' && data.players[0].hand_size === 8) {
+	/* manchmal bleiben die alten karten hängen - hier kommt alles weg*/
+	cleanallelementsclass("card");
+    }
     printcards(hand, "mycards", 0, "mycard", "center");
 
     if (lastlogele != null && (lastlogele.cards == "0")) {
