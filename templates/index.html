@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Jans dickes Tichu</title>
-    <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.27/dist/interact.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script src="/static/interact.min.js"></script>
+    <script src="/static/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="/static/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
 
     <script src="/static/DecodeCard.js"></script>
     <script src="/static/bot.js"></script>
@@ -17,23 +17,22 @@
 
 <div class="div-container">
     <div id="links" class="player gridl">
-      <div id="linkstext" > links </div>
+      <div id="linkstext"> links </div>
     </div>
     <div id="partner" class="player gridm">
-      <div id="partnertext" > partner  </div>
+      <div id="partnertext"> partner  </div>
     </div>
     <div id="rechts" class="player gridr">
-      <div id="rechtstext" >rechts </div>
+      <div id="rechtstext"> rechts </div>
     </div>
-    <div id="tisch" class="dropzone gridmain">
-      <div id="todo"> lege karte digger </div>
+    <div id="tisch" class="table gridmain">
+      <div id="todo"> </div>
     </div>
     <div id="mycards" class="gridu"></div>
     <div id="mymenu" class="gridmenu"></div>
 </div>
 
 <form id="rw" action="#" method="POST">
-
   <input type="text" id="bottext" name="bottext" size="50">
   <input type="submit" value="dobot">
   <label class="toggle">

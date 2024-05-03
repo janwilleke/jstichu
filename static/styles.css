@@ -6,26 +6,11 @@
     --global-player-rechts: #e44;
 }
 
-
-.red-card {
-    color: #b82525;
-}
-
-.green-card {
-    color: #259c25;
-}
-
-.blue-card {
-    color: #2d47cc;
-}
-
-.black-card {
-    color: #2d2f3b;
-}
-
-.special-card {
-    color: goldenrod;
-}
+.red-card     {color: #b82525;}
+.green-card   {color: #259c25;}
+.blue-card    {color: #2d47cc;}
+.black-card   {color: #2d2f3b;}
+.special-card {color: goldenrod;}
 
 .card {
     border: 2px solid #0f0f0f;
@@ -41,12 +26,15 @@
     height: 25vh;
     background: #f8f0f0;
 }
-.dropzone {
+
+.table {
   background-color: var(--global-table);
   border: dashed 4px transparent;
   border-radius: 0.6em;
   transition: background-color 0.3s;
 }
+
+.on-table {background-color: var(--global-table);}
 
 .player {
   border: dashed 4px transparent;
@@ -55,32 +43,15 @@
   transition: background-color 0.3s;
   margin: 1%; /* Fügt Abstände zwischen den div-Elementen hinzu */
 }
-/* hintergrund farbe in der dropp zone */
-.in-drop {
-  background-color: var(--global-table);
-}
 
-.player-links {
-   background-color: var(--global-player-links);
-}
-.player-partner {
-   background-color: var(--gobal-player-partner);
-}
-.player-rechts {
-   background-color: var(--global-player-rechts);
-}
-.played-self {
-    background-color: var(--global-player-self);
-}
-.played-links {
-    background-color: var(--global-player-links);
-}
-.played-partner {
-    background-color: var(--gobal-player-partner);
-}
-.played-rechts {
-    background-color: var(--global-player-rechts);
-}
+.player-links   {background-color: var(--global-player-links);}
+.player-partner {background-color: var(--gobal-player-partner);}
+.player-rechts  {background-color: var(--global-player-rechts);}
+
+.played-self    {background-color: var(--global-player-self);}
+.played-links   {background-color: var(--global-player-links);}
+.played-partner {background-color: var(--gobal-player-partner);}
+.played-rechts  {background-color: var(--global-player-rechts);}
 
 .div-container {
     display: grid;
@@ -95,13 +66,9 @@
     height: 98vh;
 }
 
-.gridl { grid-area: left;     background-color: var(--global-player-links);
-}
-.gridm { grid-area: mid;     background-color: var(--gobal-player-partner);
-}
-.gridr { grid-area: right;     background-color: var(--global-player-rechts);
-}
+.gridl { grid-area: left;   background-color: var(--global-player-links);}
+.gridm { grid-area: mid;    background-color: var(--gobal-player-partner);}
+.gridr { grid-area: right;  background-color: var(--global-player-rechts);}
+.gridu { grid-area: footer; background-color: var(--global-player-self)}
 .gridmain {grid-area: main; }
 .gridmenu {grid-area: menu;}
-
-.gridu { grid-area: footer;  background-color: var(--global-player-self)}

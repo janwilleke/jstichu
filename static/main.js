@@ -96,15 +96,15 @@ interact('.dropzone').on('tap',function (event) {
     }
 });
 
-interact('.dropzone').dropzone({
+interact('.table').dropzone({
     // Require a 75% element overlap for a drop to be possible
     overlap: 0.75,
 
     ondragenter: function (event) {
-	event.relatedTarget.classList.add('in-drop')
+	event.relatedTarget.classList.add('on-table')
     },
     ondragleave: function (event) {
-	event.relatedTarget.classList.remove('in-drop')
+	event.relatedTarget.classList.remove('on-table')
     },
 })
 
