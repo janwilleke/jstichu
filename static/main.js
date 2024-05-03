@@ -78,10 +78,10 @@ function totichuserver(cmd, addon={}) {
     outSocket.send(JSON.stringify(addon));
 }
 
-interact('.dropzone').on('tap',function (event) {
-    const collection = document.getElementsByClassName("in-drop");
+interact('.table').on('tap',function (event) {
+    const collection = document.getElementsByClassName("on-table");
     let s = "";
-    if (document.getElementById("todo").innerHTML == "kein grosses tichu") {
+    if (document.getElementById("todo").innerHTML == "Rest aufheben") {
 	totichuserver("back6");
     } else if (document.getElementById("todo").innerHTML == "aufheben") {
 	totichuserver("claim", {to_player: 0});
@@ -91,7 +91,7 @@ interact('.dropzone').on('tap',function (event) {
 	for (let i = 0; i < collection.length; i++) {
 	    s = s + collection[i].getAttribute("cardcode");
 	}
-	cleanallelementsclass("in-drop");
+	cleanallelementsclass("on-table");
 	totichuserver("play", {cards: s, wish_rank: null});
     }
 });
@@ -181,15 +181,15 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
     const dx = window.innerWidth / 14.5;
     const count = hand.length;
     let offx;
-
+    let offy
     if (orient == "left")
 	offx = 0;
     else if (orient == "right")
 	offx = wd - count * (dx + 1);
     else
 	offx = (wd - count * (dx + 1)) / 2;
-    if (y == 1)
-	y = wh/2;
+    if (y == 1) // y ==1 steht für 2. reihe
+	offy = wh/2;
 
     for (let i = 0; i < count; i++) {
 	let ch = hand[i];
@@ -211,9 +211,9 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
 		div.classList.add(extraclass);
 	}
 
-	div.style.transform = 'translate(' + (offx + i * dx) + 'px, ' + y + 'px)';
+	div.style.transform = 'translate(' + (offx + i * dx) + 'px, ' + offy + 'px)';
 	div.setAttribute('data-x', offx + i * dx);
-	div.setAttribute('data-y', y);
+	div.setAttribute('data-y', offy);
     }
 }
 
@@ -261,8 +261,8 @@ function parseincome(jdata) {
         let position = "links"; //3
         if (i === 2) position = "partner";
         if (i === 1) position = "rechts";
-        let side = document.getElementById(position + "text").innerHTML;
-	side = `${position}<br>${player.name}<br>${player.hand_size}<br>${player.tichu}`;
+	let ele = document.getElementById(position + "text");
+        ele.innerHTML = `${position}<br>${player.name}<br>${player.hand_size}<br>${player.tichu}`;
     }
 
     printcards(hand, "mycards", 0, "mycard", "center");
@@ -296,7 +296,7 @@ function parseincome(jdata) {
 
     } else if (data.state === 'passing') {
 	if (data.players[0].hand_size === 8) {
-	    document.getElementById("todo").innerHTML = "kein grosses tichu";
+	    document.getElementById("todo").innerHTML = "Rest aufheben";
 
 	} else {
 	    document.getElementById("todo").innerHTML = "schiebe phase";
