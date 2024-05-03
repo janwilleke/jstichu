@@ -1,9 +1,6 @@
-//import {decodeCard} from './DecodeCard.js'
-
 var outSocket; //json connection to the tichu server
 
 function startFunction() {
-    var botsocket // anbindung an pythin - nur noch für den bot
     var player_id = null
     var game_id = null
     searchParams = new URLSearchParams(window.location.search)
@@ -24,24 +21,18 @@ function startFunction() {
     console.log("after try to connect");
     outSocket.addEventListener('error', (event) => {
 	console.log('WebSocket connection failed:', event);
-	// wget -q -O - --post-data 'name=Peter&end_score=1000 ' http://localhost:9292/ne
 	var url = "/new";
 	fetch(url, {
 	    method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({name: "Peter", end_score: 1000})
 	}).then(response => response.json())
             .then(data => {
-		console.log(data);
 		window.location.href = "http://localhost:5000?game_id=" +
 		    data.game_id + "&player_id=" + data.player_id;
 	    })
             .catch(error => console.error('Error fetching data:', error));
-
     });
-
 
     outSocket.onmessage = (event) => {
 	parseincome(event.data);
@@ -60,23 +51,18 @@ interact('.mycard').draggable({
     // enable inertial throwing
     inertia: true,
     // keep the element within the area of it's parent
-    modifiers: [
-	interact.modifiers.restrictRect({
-            endOnly: true
-	})
-    ],
+    modifiers: [interact.modifiers.restrictRect({endOnly: true})],
     // enable autoScroll
     autoScroll: true,
-
-    listeners: {
-	move: dragMoveListener
-    }
+    listeners: {move: dragMoveListener}
 })
+
 function totichuserver(cmd, addon={}) {
     addon.command = cmd;
     console.log("cmd to server" + JSON.stringify(addon));
     outSocket.send(JSON.stringify(addon));
 }
+
 function playwhatsonthetable(wish=null) {
     const collection = document.getElementsByClassName("on-table");
     let s = "";
@@ -127,28 +113,14 @@ interact('.table').dropzone({
     ondragenter: function (event) {
 	event.relatedTarget.classList.add('on-table');
 	if (event.relatedTarget.id == "card1") {
-	    console.log("1 drin")
-	    addbutton("wish", "2", wishbutton, "wishbutton");
-	    addbutton("wish", "3", wishbutton, "wishbutton");
-	    addbutton("wish", "4", wishbutton, "wishbutton");
-	    addbutton("wish", "5", wishbutton, "wishbutton");
-	    addbutton("wish", "6", wishbutton, "wishbutton");
-	    addbutton("wish", "7", wishbutton, "wishbutton");
-	    addbutton("wish", "8", wishbutton, "wishbutton");
-	    addbutton("wish", "9", wishbutton, "wishbutton");
-	    addbutton("wish", "10", wishbutton, "wishbutton");
-	    addbutton("wish", "A", wishbutton, "wishbutton");
-	    addbutton("wish", "J", wishbutton, "wishbutton");
-	    addbutton("wish", "Q", wishbutton, "wishbutton");
-	    addbutton("wish", "K", wishbutton, "wishbutton");
-	    addbutton("wish", "A", wishbutton, "wishbutton");
-	    addbutton("wish", "-", wishbutton, "wishbutton");
+	    const wishTypes = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K', '-'];
+	    for (let i = 0; i < wishTypes.length; i++)
+		addbutton("wish", wishTypes[i], wishButton, "wishbutton");
 	}
     },
     ondragleave: function (event) {
 	event.relatedTarget.classList.remove('on-table');
 	if (event.relatedTarget.id == "card1") {
-	    console.log("1 raus")
 	    cleanallelementsclass("wishbutton");
 	}
     },
@@ -159,18 +131,17 @@ interact('.player').dropzone({
     overlap: 0.75,
 
     ondragenter: function (event) {
-	let boxid = event.target.id;
-	event.relatedTarget.classList.add('player-' + boxid);
+	event.relatedTarget.classList.add('player-' + event.target.id);
     },
     ondragleave: function (event) {
-	let boxid = event.target.id;
-	event.relatedTarget.classList.remove('player-' + boxid);
+	event.relatedTarget.classList.remove('player-' + event.target.id);
     },
     ondrop: function (event) {
 	const cl = document.getElementsByClassName("player-links");
 	const cm = document.getElementsByClassName("player-partner");
 	const cr = document.getElementsByClassName("player-rechts");
 	let s = "";
+
 	if (cr.length == 1)
 	    s = s + cr[0].getAttribute("cardcode");
 	if (cm.length == 1)
@@ -187,9 +158,7 @@ interact('.player').dropzone({
 })
 
 function pressbutton(event){
-    let buttonid = event.target.id
-    console.log(buttonid);
-    if (buttonid == "join") {
+    if (event.target.id == "join") {
 	var namefield = document.getElementById("namefield");
 	totichuserver(event.target.id, {name: namefield.value});
     } else {
@@ -198,24 +167,21 @@ function pressbutton(event){
 }
 
 function addbutton(into, name, func=pressbutton, cl=null) {
-    // Create the input element
+    // Create a input element to call func on click
     var inputElement = document.createElement('input');
 
-    // Set the ID, type, and value of the input element
     inputElement.setAttribute('id', name);
     inputElement.setAttribute('type', 'button');
     inputElement.value = name;
     if (cl != null)
 	inputElement.classList.add(cl);
-    // Add the onclick event handler
     inputElement.addEventListener('click', func);
-
-    // Append the input element to the body of the document
     document.getElementById(into).appendChild(inputElement);
-
 }
-function addtext(into, name) {
+
+function addtext(into, name) { /* needed only for the name */
     var textele = document.createElement('input');
+
     textele.setAttribute("id", name);
     textele.setAttribute("size", "50");
     textele.setAttribute('type', 'text');
@@ -271,6 +237,7 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
 
 function addclasstocard(card, classname) {
     let cardnum = card.charCodeAt(0) - '0'.charCodeAt(0);
+
     if (document.getElementById("card" + cardnum) || false) {
 	document.getElementById("card" + cardnum).classList.add(classname);
     }
@@ -293,6 +260,7 @@ function printcardsforplayer(player, cards) {
 	if (player == 0)
 	    printcards(cards, "tisch", 1, "played-self", "right");
 }
+
 function parseincome(jdata) {
     let data = JSON.parse(jdata);
     let hand = data.players[0].hand;
@@ -414,10 +382,8 @@ function dragMoveListener (event) {
     var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
     var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
 
-    // translate the element
     target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
 
-    // update the posiion attributes
     target.setAttribute('data-x', x)
     target.setAttribute('data-y', y)
 }
