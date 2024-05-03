@@ -1,28 +1,32 @@
 var outSocket; //json connection to the tichu server
-var player_id = null
-var game_id = null
 
 function startFunction() {
     if (window.location.hash) {
 	var hash = window.location.hash.substring(1); // Removes the '#' character
-	console.log(hash); // Outputs: "asdf:adf"
 	params = hash.split(':');
-	game_id = params[0];
-	player_id = params[1];
-
-	console.log("option player:" + player_id + "game:" + game_id);
-	connectws(game_id, player_id)
-	return
+	console.log("option player:" + params[1] + "game:" + params[0]);
+	connectws(params[0], params[1])
+    } else {
+	console.log("ask for new");
+	addtext("todo", "namefield");
+	addbutton("todo", "Start Game", getnewgame);
+	addbutton("todo", "Game-code", usegamecode);
     }
+}
 
-    // horst und port als parameter wird auch mal interessanter
-    console.log("ask for new");
-    var url = "/new?name=asdf&end_score=1000";
-    fetch(url, {
-	method: 'POST'
-    }).then(response => response.json())
+function usegamecode() {
+    var namefield = document.getElementById("namefield");
+
+    connectws(namefield.value, null);
+}
+
+function getnewgame() {
+    var namefield = document.getElementById("namefield");
+    var url = "/new?name=" + namefield.value + "&end_score=1000";
+
+    fetch(url, {method: 'POST'}).then(response => response.json())
         .then(data => {
-	    console.log(data);
+	    // update url for refresh by user
 	    window.location.href = "index.html#" +
 		data.game_id + ":" + data.player_id;
 	    console.log("got new");
@@ -33,17 +37,18 @@ function startFunction() {
 
 function connectws(game_id, player_id) {
     var cns = `${location.origin.replace(/^http/, 'ws')}/connect`;
+
     cns = cns + "?game_id=" + game_id + "&player_id=";
     if (player_id != null) cns = cns + player_id;
-    console.log(cns);
+    console.log("ws url: " + cns);
     outSocket = new WebSocket(cns);
-    console.log("after try to connect");
+    console.log("ws connected");
 
     outSocket.onmessage = (event) => {
 	parseincome(event.data);
 	dobotcalc(JSON.parse(event.data));
     };
-
+    // only if connected we can use a bot
     var bottext = document.getElementById("bottext");
     $('form#rw').submit(function(event) {
 	console.log("button" + $('#bottext').val());
@@ -96,6 +101,7 @@ interact('.table').on('tap',function (event) {
 
 function wishbutton(event){
     let buttonid = event.target.id
+
     if (buttonid == "-")
 	playwhatsonthetable(null);
     else
@@ -104,8 +110,7 @@ function wishbutton(event){
 }
 
 function abgebbutton(event){
-    let buttonid = event.target.id
-    if (buttonid == "links")
+    if (event.target.id == "links")
 	totichuserver("claim", {to_player: 3});
     else
 	totichuserver("claim", {to_player: 1});
@@ -276,8 +281,6 @@ function parseincome(jdata) {
 
     if (data.player_id) {
 	// refresh the url - to save the player_id - in case restart
-//	document.location.search = "#" +
-//	    data.id + ":" + data.player_id;
 	window.location.href = "index.html#" +
 	    data.id + ":" + data.player_id;
     }
