@@ -225,10 +225,15 @@ function addtext(into, name) {
 function printcards(hand, into, y, extraclass = null, orient = "left") {
     let wd = document.getElementById(into).offsetWidth;
     let wh = document.getElementById(into).offsetHeight;
-    const dx = window.innerWidth / 14.5;
+    let dx = window.innerWidth / 14.5;
     const count = hand.length;
     let offx;
     let offy;
+
+    if (wd < dx * count) {
+	/* scheise zu viele karten für zu wennig platz */
+	dx = wd / (count + 1);
+    }
     offy = 0;
     if (orient == "left")
 	offx = 0;
