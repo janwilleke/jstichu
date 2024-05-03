@@ -1,15 +1,22 @@
-rackup -o 0.0.0.0 beim orignal tichu startet de server.
-python app.py den js - python server
+Alternativ frontend for
+https://github.com/jstanley0/tichu
 
-localhost:5000 startet das spiel.
-( der erste der aufmacht ist leader (deal rotate))
-die nächsten drei können per join dazu
 
-Egal wer kann unten den autobot anhacken dann geht alles von selbst
+clone into tichu/public/alt
+
+add into body of: tichu/views/index.erb
+
+<a href="tichujan/index.html">Alternativ Frontend</a>
+
+or start direct with:
+
+http://localhost:9292/alt/index.html
+
+
 
 TODO:
 
-* server in python convertiren
+* remove the german ;-)
 * farben anpassen
 * hochkant support
 
