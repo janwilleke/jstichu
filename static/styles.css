@@ -1,9 +1,9 @@
 :root {
-    --global-green: #259c25; /* Define the color globally */
-    --global-player0: #cc0;
-    --global-player1: #4ff;
-    --global-player2: #064;
-    --global-player3: #e44;
+    --global-table: #bfe4ff; /* Define the color globally */
+    --global-player-self: #cc0;
+    --global-player-links: #4ff;
+    --gobal-player-partner: #064;
+    --global-player-rechts: #e44;
 }
 
 
@@ -12,7 +12,7 @@
 }
 
 .green-card {
-    color: var(--global-green);
+    color: #259c25;
 }
 
 .blue-card {
@@ -42,14 +42,13 @@
     background: #f8f0f0;
 }
 .dropzone {
-  background-color: #bfe4ff;
+  background-color: var(--global-table);
   border: dashed 4px transparent;
   border-radius: 0.6em;
   transition: background-color 0.3s;
 }
 
 .player {
-  background-color: #bfe40f;
   border: dashed 4px transparent;
   border-radius: 0.6em;
   padding: 10px;
@@ -58,29 +57,29 @@
 }
 /* hintergrund farbe in der dropp zone */
 .in-drop {
-  background-color: #4e4;
+  background-color: var(--global-table);
 }
 
 .player-links {
-   background-color: var(--global-player1);
+   background-color: var(--global-player-links);
 }
 .player-mitte {
-   background-color: var(--global-player2);
+   background-color: var(--gobal-player-partner);
 }
 .player-rechts {
-   background-color: var(--global-player3);
+   background-color: var(--global-player-rechts);
 }
-.played0 {
-    background-color: var(--global-player0);
+.played-self {
+    background-color: var(--global-player-self);
 }
-.played1 {
-    background-color: var(--global-player1);
+.played-links {
+    background-color: var(--global-player-links);
 }
-.played2 {
-    background-color: var(--global-player2);
+.played-partner {
+    background-color: var(--gobal-player-partner);
 }
-.played3 {
-    background-color: var(--global-player3);
+.played-rechts {
+    background-color: var(--global-player-rechts);
 }
 
 .div-container {
@@ -96,13 +95,13 @@
     height: 98vh;
 }
 
-.gridl { grid-area: left;     background-color: var(--global-player1);
+.gridl { grid-area: left;     background-color: var(--global-player-links);
 }
-.gridm { grid-area: mid;     background-color: var(--global-player2);
+.gridm { grid-area: mid;     background-color: var(--gobal-player-partner);
 }
-.gridr { grid-area: right;     background-color: var(--global-player3);
+.gridr { grid-area: right;     background-color: var(--global-player-rechts);
 }
 .gridmain {grid-area: main; }
 .gridmenu {grid-area: menu;}
 
-.gridu { grid-area: footer;  background-color: #eeaeee}
+.gridu { grid-area: footer;  background-color: var(--global-player-self)}

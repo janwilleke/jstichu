@@ -256,28 +256,30 @@ function parseincome(jdata) {
     }
 
     /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
-    if (data.players.length > 3)
-	document.getElementById("linkstext").innerHTML = "links<br>"   + data.players[3].name + "<br>" + data.players[3].hand_size + "<br>" + data.players[3].tichu;
-    if (data.players.length > 2)
-	document.getElementById("mittetext").innerHTML = "mitte<br>"   + data.players[2].name + "<br>" + data.players[2].hand_size + "<br>" + data.players[2].tichu;
-    if (data.players.length > 1)
-	document.getElementById("rechtstext").innerHTML = "rechts<br>" + data.players[1].name + "<br>" + data.players[1].hand_size + "<br>" + data.players[1].tichu;
+    for (let i = data.players.length - 1; i > 0; i--) {
+	let player = data.players[i];
+        let position = "links"; //3
+        if (i === 2) position = "mitte";
+        if (i === 1) position = "rechts";
+        let side = document.getElementById(position + "text").innerHTML;
+	side = `${position}<br>${player.name}<br>${player.hand_size}<br>${player.tichu}`;
+    }
 
     printcards(hand, "mycards", 0, "mycard", "center");
     if (lastplay.cards == "") {
-	cleanallelementsclass("played0");
-	cleanallelementsclass("played1");
-	cleanallelementsclass("played2");
-	cleanallelementsclass("played3");
+	cleanallelementsclass("played-self");
+	cleanallelementsclass("played-links");
+	cleanallelementsclass("played-partner");
+	cleanallelementsclass("played-rechts");
     } else {
 	if (lastplay.player == 1) /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
-	    printcards(lastplay.cards, "tisch", 0, "played3", "right");
+	    printcards(lastplay.cards, "tisch", 0, "played-rechts", "right");
 	if (lastplay.player == 2)
-	    printcards(lastplay.cards, "tisch", 0, "played2", "left");
+	    printcards(lastplay.cards, "tisch", 0, "played-partner", "left");
 	if (lastplay.player == 3)
-	    printcards(lastplay.cards, "tisch", 1, "played1", "left");
+	    printcards(lastplay.cards, "tisch", 1, "played-links", "left");
 	if (lastplay.player == 0)
-	    printcards(lastplay.cards, "tisch", 1, "played0", "right");
+	    printcards(lastplay.cards, "tisch", 1, "played-self", "right");
     }
 
     if (data.error) {
