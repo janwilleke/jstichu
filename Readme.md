@@ -9,12 +9,11 @@ Egal wer kann unten den autobot anhacken dann geht alles von selbst
 
 TODO:
 
-* drachen stich verschieben,
-* wünschen / anzeigen
-* eigenen stich vor dem aufheben abbombbar machen
 * server in python convertiren
 * farben anpassen
 * hochkant support
+* hund aus dem log hinlegen
+* zeigen was von wem kam
 
 server:
 
