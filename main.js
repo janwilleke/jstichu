@@ -1,38 +1,43 @@
 var outSocket; //json connection to the tichu server
+var player_id = null
+var game_id = null
 
 function startFunction() {
-    var player_id = null
-    var game_id = null
-    searchParams = new URLSearchParams(window.location.search)
-    if (searchParams.has('player_id'))
-	player_id = searchParams.get('player_id');
-    if (searchParams.has('game_id'))
-	game_id = searchParams.get('game_id');
-    console.log("option player:" + player_id + "game:" + game_id);
+    if (window.location.hash) {
+	var hash = window.location.hash.substring(1); // Removes the '#' character
+	console.log(hash); // Outputs: "asdf:adf"
+	params = hash.split(':');
+	game_id = params[0];
+	player_id = params[1];
 
-    // horst und port als parameter wird auch mal interessanter
-    var cns = `${location.origin.replace(/^http/, 'ws')}/connect`;
-    console.log(cns);
-    if (game_id != null) {
-	cns = cns + "?game_id=" + game_id + "&player_id=";
-        if (player_id != null) cns = cns + player_id;
+	console.log("option player:" + player_id + "game:" + game_id);
+	connectws(game_id, player_id)
+	return
     }
 
+    // horst und port als parameter wird auch mal interessanter
+    console.log("ask for new");
+    var url = "/new?name=asdf&end_score=1000";
+    fetch(url, {
+	method: 'POST'
+    }).then(response => response.json())
+        .then(data => {
+	    console.log(data);
+	    window.location.href = "index.html#" +
+		data.game_id + ":" + data.player_id;
+	    console.log("got new");
+	    connectws(data.game_id, data.player_id)
+	})
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+function connectws(game_id, player_id) {
+    var cns = `${location.origin.replace(/^http/, 'ws')}/connect`;
+    cns = cns + "?game_id=" + game_id + "&player_id=";
+    if (player_id != null) cns = cns + player_id;
+    console.log(cns);
     outSocket = new WebSocket(cns);
     console.log("after try to connect");
-    outSocket.addEventListener('error', (event) => {
-	console.log('WebSocket connection failed:', event);
-	var url = "/new?name=asdf&end_score=1000";
-	fetch(url, {
-	    method: 'POST'
-	}).then(response => response.json())
-            .then(data => {
-		console.log(data);
-		window.location.href = "index.html?game_id=" +
-		    data.game_id + "&player_id=" + data.player_id;
-	    })
-            .catch(error => console.error('Error fetching data:', error));
-    });
 
     outSocket.onmessage = (event) => {
 	parseincome(event.data);
@@ -271,8 +276,10 @@ function parseincome(jdata) {
 
     if (data.player_id) {
 	// refresh the url - to save the player_id - in case restart
-	document.location.search = "game_id=" +
-	    data.id + "&player_id=" + data.player_id;
+//	document.location.search = "#" +
+//	    data.id + ":" + data.player_id;
+	window.location.href = "index.html#" +
+	    data.id + ":" + data.player_id;
     }
 
     if (data.can_join == true) {
