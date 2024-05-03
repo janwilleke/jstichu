@@ -122,7 +122,7 @@ interact('.player').dropzone({
     },
     ondrop: function (event) {
 	const cl = document.getElementsByClassName("player-links");
-	const cm = document.getElementsByClassName("player-mitte");
+	const cm = document.getElementsByClassName("player-partner");
 	const cr = document.getElementsByClassName("player-rechts");
 	let s = "";
 	if (cr.length == 1)
@@ -259,7 +259,7 @@ function parseincome(jdata) {
     for (let i = data.players.length - 1; i > 0; i--) {
 	let player = data.players[i];
         let position = "links"; //3
-        if (i === 2) position = "mitte";
+        if (i === 2) position = "partner";
         if (i === 1) position = "rechts";
         let side = document.getElementById(position + "text").innerHTML;
 	side = `${position}<br>${player.name}<br>${player.hand_size}<br>${player.tichu}`;
