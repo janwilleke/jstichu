@@ -11,7 +11,8 @@ function startFunction() {
     console.log("option player:" + player_id + "game:" + game_id);
 
     // horst und port als parameter wird auch mal interessanter
-    var cns = "ws://192.168.178.152:9292/connect";
+    var cns = `${location.origin.replace(/^http/, 'ws')}/connect`;
+    console.log(cns);
     if (game_id != null) {
 	cns = cns + "?game_id=" + game_id + "&player_id=";
         if (player_id != null) cns = cns + player_id;
@@ -21,14 +22,13 @@ function startFunction() {
     console.log("after try to connect");
     outSocket.addEventListener('error', (event) => {
 	console.log('WebSocket connection failed:', event);
-	var url = "/new";
+	var url = "/new?name=asdf&end_score=1000";
 	fetch(url, {
-	    method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({name: "Peter", end_score: 1000})
+	    method: 'POST'
 	}).then(response => response.json())
             .then(data => {
-		window.location.href = "http://localhost:5000?game_id=" +
+		console.log(data);
+		window.location.href = "index.html?game_id=" +
 		    data.game_id + "&player_id=" + data.player_id;
 	    })
             .catch(error => console.error('Error fetching data:', error));
