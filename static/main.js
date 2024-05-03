@@ -77,34 +77,80 @@ function totichuserver(cmd, addon={}) {
     console.log("cmd to server" + JSON.stringify(addon));
     outSocket.send(JSON.stringify(addon));
 }
-
-interact('.table').on('tap',function (event) {
+function playwhatsonthetable(wish=null) {
     const collection = document.getElementsByClassName("on-table");
     let s = "";
+    for (let i = 0; i < collection.length; i++) {
+	s = s + collection[i].getAttribute("cardcode");
+    }
+    cleanallelementsclass("on-table");
+    totichuserver("play", {cards: s, wish_rank: wish});
+}
+
+interact('.table').on('tap',function (event) {
     if (document.getElementById("todo").innerHTML == "Rest aufheben") {
 	totichuserver("back6");
     } else if (document.getElementById("todo").innerHTML == "aufheben") {
 	totichuserver("claim", {to_player: 0});
-    } else if (document.getElementById("todo").innerHTML == "abgeben") {
-	totichuserver("claim", {to_player: 1});
+    } else if (document.getElementById("todo").innerHTML == "legen"){
+	const collection = document.getElementsByClassName("wishbutton")
+	if (collection.length == 0) /* der einer zug muss über wünschen gelegt werden */
+	    playwhatsonthetable();
+    } else if (document.getElementById("todo").innerHTML == "bomben") {
+	playwhatsonthetable();
     } else {
-	for (let i = 0; i < collection.length; i++) {
-	    s = s + collection[i].getAttribute("cardcode");
-	}
-	cleanallelementsclass("on-table");
-	totichuserver("play", {cards: s, wish_rank: null});
+	console.log("dont know what todo");
     }
 });
+
+function wishbutton(event){
+    let buttonid = event.target.id
+    if (buttonid == "-")
+	playwhatsonthetable(null);
+    else
+	playwhatsonthetable(buttonid);
+    cleanallelementsclass("wishbutton");
+}
+
+function abgebbutton(event){
+    let buttonid = event.target.id
+    if (buttonid == "links")
+	totichuserver("claim", {to_player: 3});
+    else
+	totichuserver("claim", {to_player: 1});
+}
 
 interact('.table').dropzone({
     // Require a 75% element overlap for a drop to be possible
     overlap: 0.75,
 
     ondragenter: function (event) {
-	event.relatedTarget.classList.add('on-table')
+	event.relatedTarget.classList.add('on-table');
+	if (event.relatedTarget.id == "card1") {
+	    console.log("1 drin")
+	    addbutton("wish", "2", wishbutton, "wishbutton");
+	    addbutton("wish", "3", wishbutton, "wishbutton");
+	    addbutton("wish", "4", wishbutton, "wishbutton");
+	    addbutton("wish", "5", wishbutton, "wishbutton");
+	    addbutton("wish", "6", wishbutton, "wishbutton");
+	    addbutton("wish", "7", wishbutton, "wishbutton");
+	    addbutton("wish", "8", wishbutton, "wishbutton");
+	    addbutton("wish", "9", wishbutton, "wishbutton");
+	    addbutton("wish", "10", wishbutton, "wishbutton");
+	    addbutton("wish", "A", wishbutton, "wishbutton");
+	    addbutton("wish", "J", wishbutton, "wishbutton");
+	    addbutton("wish", "Q", wishbutton, "wishbutton");
+	    addbutton("wish", "K", wishbutton, "wishbutton");
+	    addbutton("wish", "A", wishbutton, "wishbutton");
+	    addbutton("wish", "-", wishbutton, "wishbutton");
+	}
     },
     ondragleave: function (event) {
-	event.relatedTarget.classList.remove('on-table')
+	event.relatedTarget.classList.remove('on-table');
+	if (event.relatedTarget.id == "card1") {
+	    console.log("1 raus")
+	    cleanallelementsclass("wishbutton");
+	}
     },
 })
 
@@ -113,12 +159,12 @@ interact('.player').dropzone({
     overlap: 0.75,
 
     ondragenter: function (event) {
-	let boxid = event.target.id
-	event.relatedTarget.classList.add('player-' + boxid)
+	let boxid = event.target.id;
+	event.relatedTarget.classList.add('player-' + boxid);
     },
     ondragleave: function (event) {
-	let boxid = event.target.id
-	event.relatedTarget.classList.remove('player-' + boxid)
+	let boxid = event.target.id;
+	event.relatedTarget.classList.remove('player-' + boxid);
     },
     ondrop: function (event) {
 	const cl = document.getElementsByClassName("player-links");
@@ -151,7 +197,7 @@ function pressbutton(event){
     }
 }
 
-function addbutton(into, name) {
+function addbutton(into, name, func=pressbutton, cl=null) {
     // Create the input element
     var inputElement = document.createElement('input');
 
@@ -159,9 +205,10 @@ function addbutton(into, name) {
     inputElement.setAttribute('id', name);
     inputElement.setAttribute('type', 'button');
     inputElement.value = name;
-
+    if (cl != null)
+	inputElement.classList.add(cl);
     // Add the onclick event handler
-    inputElement.addEventListener('click', pressbutton);
+    inputElement.addEventListener('click', func);
 
     // Append the input element to the body of the document
     document.getElementById(into).appendChild(inputElement);
@@ -181,7 +228,8 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
     const dx = window.innerWidth / 14.5;
     const count = hand.length;
     let offx;
-    let offy
+    let offy;
+    offy = 0;
     if (orient == "left")
 	offx = 0;
     else if (orient == "right")
@@ -290,6 +338,11 @@ function parseincome(jdata) {
     if (data.players[0].can_tichu)
 	addbutton("mymenu", "tichu");
 
+    if (data["wish_rank"] != null && data["wish_rank"] != "") {
+	document.getElementById("wish").innerHTML = "wunsch: " + data["wish_rank"];
+    } else {
+	document.getElementById("wish").innerHTML = "";
+    }
     if (data.state === 'over') {
 	document.getElementById("todo").innerHTML = "Spiel to ende";
 	addbutton("mymenu", "New Game");
@@ -302,10 +355,14 @@ function parseincome(jdata) {
 	    document.getElementById("todo").innerHTML = "schiebe phase";
 	}
     } else if (data['trick_winner'] == 0) {
-	if (data.dragon_trick)
-	    document.getElementById("todo").innerHTML = "abgeben";
-	else
+	if (data.dragon_trick) {
+	    document.getElementById("todo").innerHTML = "bomben";
+	    document.getElementById("wish").innerHTML = "oder abgeben"
+	    addbutton("wish", "links", abgebbutton, "abgebebutton");
+	    addbutton("wish", "rechts", abgebbutton, "abgebebutton");
+	} else {
 	    document.getElementById("todo").innerHTML = "aufheben";
+	}
     } else {
 	document.getElementById("todo").innerHTML = "legen";
     }
