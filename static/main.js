@@ -258,7 +258,6 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
 	    if (extraclass != null)
 		div.classList.add(extraclass);
 	}
-
 	div.style.transform = 'translate(' + (offx + i * dx) + 'px, ' + offy + 'px)';
 	div.setAttribute('data-x', offx + i * dx);
 	div.setAttribute('data-y', offy);
@@ -271,12 +270,23 @@ function cleanallelementsclass(c) {
 	    collection[0].remove();
 	}
 }
+function printcardsforplayer(player, cards) {
 
+	if (player == 1) /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
+	    printcards(cards, "tisch", 0, "played-rechts", "right");
+	if (player == 2)
+	    printcards(cards, "tisch", 0, "played-partner", "left");
+	if (player == 3)
+	    printcards(cards, "tisch", 1, "played-links", "left");
+	if (player == 0)
+	    printcards(cards, "tisch", 1, "played-self", "right");
+}
 function parseincome(jdata) {
     let data = JSON.parse(jdata);
     let hand = data.players[0].hand;
     let lastplay = data.last_play || {cards: ""};
     let error = data.error || null;
+    let lastlogele = data.log.slice(-1)[0];
 
     if (data.player_id) {
 	// refresh the url - to save the player_id - in case restart
@@ -314,12 +324,16 @@ function parseincome(jdata) {
     }
 
     printcards(hand, "mycards", 0, "mycard", "center");
-    if (lastplay.cards == "") {
+    if (lastlogele != null && (lastlogele.cards == "0")) {
+	printcardsforplayer(lastlogele.pi, lastlogele.cards); //extra hund print
+    } else if (lastplay.cards == "") {
 	cleanallelementsclass("played-self");
 	cleanallelementsclass("played-links");
 	cleanallelementsclass("played-partner");
 	cleanallelementsclass("played-rechts");
     } else {
+	printcardsforplayer(lastplay.player, lastplay.cards);
+
 	if (lastplay.player == 1) /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
 	    printcards(lastplay.cards, "tisch", 0, "played-rechts", "right");
 	if (lastplay.player == 2)
