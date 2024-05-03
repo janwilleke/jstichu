@@ -12,11 +12,8 @@ TODO:
 * server in python convertiren
 * farben anpassen
 * hochkant support
-* hund aus dem log hinlegen
-* zeigen was von wem kam
 
 server:
 
-* hund muss aufgenommen werden  - so ist er unsichtbar.
 * solange nicht alle geschoben haben könnte man ändern.
 * direktes bomben.

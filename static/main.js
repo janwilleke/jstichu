@@ -264,14 +264,21 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
     }
 }
 
+function addclasstocard(card, classname) {
+    let cardnum = card.charCodeAt(0) - '0'.charCodeAt(0);
+    if (document.getElementById("card" + cardnum) || false) {
+	document.getElementById("card" + cardnum).classList.add(classname);
+    }
+}
+
 function cleanallelementsclass(c) {
 	const collection = document.getElementsByClassName(c);
 	while (collection.length > 0) {
 	    collection[0].remove();
 	}
 }
-function printcardsforplayer(player, cards) {
 
+function printcardsforplayer(player, cards) {
 	if (player == 1) /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
 	    printcards(cards, "tisch", 0, "played-rechts", "right");
 	if (player == 2)
@@ -287,6 +294,7 @@ function parseincome(jdata) {
     let lastplay = data.last_play || {cards: ""};
     let error = data.error || null;
     let lastlogele = data.log.slice(-1)[0];
+    let lastlogele2 = data.log.slice(-2)[0];
 
     if (data.player_id) {
 	// refresh the url - to save the player_id - in case restart
@@ -297,7 +305,6 @@ function parseincome(jdata) {
     if (data.can_join == true) {
 	document.getElementById("todo").innerHTML = "please Join";
 	addtext("mymenu", "namefield");
-
 	addbutton("mymenu", "join");
 	return
     }
@@ -324,8 +331,9 @@ function parseincome(jdata) {
     }
 
     printcards(hand, "mycards", 0, "mycard", "center");
+
     if (lastlogele != null && (lastlogele.cards == "0")) {
-	printcardsforplayer(lastlogele.pi, lastlogele.cards); //extra hund print
+	printcardsforplayer(lastlogele.pi, lastlogele.cards); //extra hund print per log
     } else if (lastplay.cards == "") {
 	cleanallelementsclass("played-self");
 	cleanallelementsclass("played-links");
@@ -379,6 +387,19 @@ function parseincome(jdata) {
 	}
     } else {
 	document.getElementById("todo").innerHTML = "legen";
+    }
+    /* erhaltene karten anmalen bis losgespielt - per log pfui */
+    if (lastlogele2 && lastlogele2.text == "You received") {
+	addclasstocard(lastlogele2.cards[0], "from-links");
+	addclasstocard(lastlogele2.cards[1], "from-partner");
+	addclasstocard(lastlogele2.cards[2], "from-rechts");
+    } else { /* remove this colors after playing */
+	for (let ele of document.getElementsByClassName("from-links"))
+	    ele.classList.remove("from-links");
+	for (let ele of document.getElementsByClassName("from-partner"))
+	    ele.classList.remove("from-partner");
+	for (let ele of document.getElementsByClassName("from-rechts"))
+	    ele.classList.remove("from-rechts");
     }
 }
 

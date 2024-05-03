@@ -47,6 +47,9 @@
 .player-links   {background-color: var(--global-player-links);}
 .player-partner {background-color: var(--gobal-player-partner);}
 .player-rechts  {background-color: var(--global-player-rechts);}
+.from-links   {background-color: var(--global-player-links);}
+.from-partner {background-color: var(--gobal-player-partner);}
+.from-rechts  {background-color: var(--global-player-rechts);}
 
 .played-self    {background-color: var(--global-player-self);}
 .played-links   {background-color: var(--global-player-links);}
