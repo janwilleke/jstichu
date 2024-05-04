@@ -1,5 +1,14 @@
 var outSocket; //json connection to the tichu server
 
+function asknewgame(name="") {
+    console.log("ask for new");
+    addtext("todo", "namefield");
+    var namefield = document.getElementById("namefield");
+    namefield.value = name;
+    addbutton("todo", "Start Game", getnewgame);
+    addbutton("todo", "Game-code", usegamecode);
+}
+
 function startFunction() {
     if (window.location.hash) {
 	var hash = window.location.hash.substring(1); // Removes the '#' character
@@ -7,13 +16,9 @@ function startFunction() {
 	console.log("option player:" + params[1] + "game:" + params[0]);
 	connectws(params[0], params[1])
     } else {
-	console.log("ask for new");
-	addtext("todo", "namefield");
-	addbutton("todo", "Start Game", getnewgame);
-	addbutton("todo", "Game-code", usegamecode);
+	asknewgame();
     }
 }
-
 function usegamecode() {
     var namefield = document.getElementById("namefield");
 
@@ -287,13 +292,15 @@ function parseincome(jdata) {
 
     if (data.can_join == true) {
 	document.getElementById("todo").innerHTML = "please Join";
-	addtext("mymenu", "namefield");
-	addbutton("mymenu", "join");
+	if ($('#namefield').length == 0) {
+	    addtext("mymenu", "namefield");
+	    addbutton("mymenu", "join");
+	}
 	return
     }
     document.getElementById("mymenu").innerHTML = data.players[0].name + "<br>" +
 	data.players[0].tichu + "<br>";
-    if (data.state === 'ready') {
+    if (data.state === 'ready' && data.dealer === 0) {
 	addbutton("mymenu", "deal");
 	addbutton("mymenu", "rotate_teams");
     }
@@ -353,8 +360,7 @@ function parseincome(jdata) {
     }
     if (data.state === 'over') {
 	document.getElementById("todo").innerHTML = "Spiel to ende";
-	addbutton("mymenu", "New Game");
-
+	asknewgame(data.players[0].name);
     } else if (data.state === 'passing') {
 	if (data.players[0].hand_size === 8) {
 	    document.getElementById("todo").innerHTML = "Rest aufheben";
