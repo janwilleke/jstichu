@@ -72,6 +72,6 @@
 .gridl { grid-area: left;   background-color: var(--global-player-links);}
 .gridm { grid-area: mid;    background-color: var(--gobal-player-partner);}
 .gridr { grid-area: right;  background-color: var(--global-player-rechts);}
-.gridu { grid-area: footer; background-color: var(--global-player-self)}
+.gridu { grid-area: footer; background-color: var(--global-player-self); }
 .gridmain {grid-area: main; }
-.gridmenu {grid-area: menu;}
+.gridmenu {grid-area: menu; background-color: var(--global-player-self); }

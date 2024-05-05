@@ -225,6 +225,7 @@ function printcards(hand, into, intomaster, y, extraclass = null, orient = "left
 	let ch = hand[i];
 	let cardnum = ch.charCodeAt(0) - '0'.charCodeAt(0);
         let div;
+	let move = false;
 	if (document.getElementById("card" + cardnum) || false) {
 	    div = document.getElementById("card" + cardnum); // only move
 	} else { // add the card
@@ -239,10 +240,15 @@ function printcards(hand, into, intomaster, y, extraclass = null, orient = "left
 	    document.getElementById(intomaster).appendChild(div);
 	    if (extraclass != null)
 		div.classList.add(extraclass);
+	    move = true;
 	}
-	div.style.transform = 'translate(' + (offx + i * dx) + 'px, ' + offy + 'px)';
-	div.setAttribute('data-x', offx + i * dx);
-	div.setAttribute('data-y', offy);
+	/* scheis trick wenn der user die karte schon bewegt hat
+	   dann wird sie nicht auto bewegt */
+	if (move || div.getAttribute('data-y') == offy) {
+	    div.style.transform = 'translate(' + (offx + i * dx) + 'px, ' + offy + 'px)';
+	    div.setAttribute('data-x', offx + i * dx);
+	    div.setAttribute('data-y', offy);
+	}
     }
 }
 
@@ -273,7 +279,6 @@ function printcardsforplayer(player, cards) {
 }
 
 function parseincome(jdata) {
-    console.log(jdata);
     let data = JSON.parse(jdata);
     let hand = data.players[0].hand;
     let lastplay = data.last_play || {cards: ""};
@@ -395,5 +400,4 @@ function dragMoveListener (event) {
     target.setAttribute('data-y', y)
 }
 
-// this function is used later in the resizing and gesture demos
 window.dragMoveListener = dragMoveListener
