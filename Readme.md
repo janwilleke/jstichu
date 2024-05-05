@@ -20,6 +20,17 @@ TODO:
 * farben anpassen
 * hochkant support
 
+* wer is dran
+* touch tut nicht gescheit
+* aufbau
+* karten zusammen murkts - vorsortiren...
+* jubel - animationen
+* wenn einer aktualliriert / schiebt - werden bei den anderen die karten zurückgesetzt
+* überlegen taste (emmi)
+* karen ausserhalb vom spielfeld
+* emmis browser bugt - gibts eine fix browser?
+* fix gameid
+
 server:
 
 * solange nicht alle geschoben haben könnte man ändern.
