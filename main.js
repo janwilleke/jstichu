@@ -201,13 +201,16 @@ function addtext(into, name) { /* needed only for the name */
 
     document.getElementById(into).appendChild(textele);
 }
-function printcards(hand, into, intomaster, y, extraclass = null, orient = "left", offy=0) {
+function printcards(hand, into, intomaster, y, extraclass = null, orient = "left") {
     let wd = document.getElementById(into).offsetWidth;
     let wh = document.getElementById(into).offsetHeight;
     let dx = window.innerWidth / 14.5;
     const count = hand.length;
     let offx;
+    let offy = 0;
 
+    if (into != intomaster)
+	offy = document.getElementById(into).offsetTop; //abstand von oben zu into
     if (wd < dx * count) {
 	/* scheise zu viele karten für zu wennig platz */
 	dx = wd / (count + 1);
@@ -325,8 +328,7 @@ function parseincome(jdata) {
 	/* manchmal bleiben die alten karten hängen - hier kommt alles weg*/
 	cleanallelementsclass("card");
     }
-    printcards(hand, "mycards", "alles", 0, "mycard", "center",
-	       offy = document.getElementById("tisch").offsetHeight);
+    printcards(hand, "mycards", "alles", 0, "mycard", "center");
 
     if (lastlogele != null && (lastlogele.cards == "0")) {
 	printcardsforplayer(lastlogele.pi, lastlogele.cards); //extra hund print per log
@@ -399,5 +401,32 @@ function dragMoveListener (event) {
     target.setAttribute('data-x', x)
     target.setAttribute('data-y', y)
 }
+/* Get the documentElement (<html>) to display the page in fullscreen */
+v
+/* View in fullscreen */
+function openFullscreen() {
+    let elem = document.documentElement;
+
+    if (elem.requestFullscreen) {
+	elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+	elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+	elem.msRequestFullscreen();
+    }
+}
+
+/* Close fullscreen */
+function closeFullscreen() {
+    let  elem = document.documentElement;
+    if (document.exitFullscreen) {
+	document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { /* Safari */
+	document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE11 */
+	document.msExitFullscreen();
+    }
+}
+
 
 window.dragMoveListener = dragMoveListener
