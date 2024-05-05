@@ -66,9 +66,7 @@ interact('.mycard').draggable({
     // enable inertial throwing
     inertia: true,
     // keep the element within the area of it's parent
-    modifiers: [interact.modifiers.restrictRect({endOnly: true})],
-    // enable autoScroll
-    autoScroll: true,
+    modifiers: [interact.modifiers.restrictRect({restriction: 'parent'})],
     listeners: {move: dragMoveListener}
 })
 
@@ -203,19 +201,17 @@ function addtext(into, name) { /* needed only for the name */
 
     document.getElementById(into).appendChild(textele);
 }
-function printcards(hand, into, y, extraclass = null, orient = "left") {
+function printcards(hand, into, intomaster, y, extraclass = null, orient = "left", offy=0) {
     let wd = document.getElementById(into).offsetWidth;
     let wh = document.getElementById(into).offsetHeight;
     let dx = window.innerWidth / 14.5;
     const count = hand.length;
     let offx;
-    let offy;
 
     if (wd < dx * count) {
 	/* scheise zu viele karten für zu wennig platz */
 	dx = wd / (count + 1);
     }
-    offy = 0;
     if (orient == "left")
 	offx = 0;
     else if (orient == "right")
@@ -240,7 +236,7 @@ function printcards(hand, into, y, extraclass = null, orient = "left") {
 	    div.setAttribute('cardcode', cardcode);
 	    div.textContent = rank + " " + suit;
 	    div.classList.add(color_style); // lockup inside css
-	    document.getElementById(into).appendChild(div);
+	    document.getElementById(intomaster).appendChild(div);
 	    if (extraclass != null)
 		div.classList.add(extraclass);
 	}
@@ -267,16 +263,17 @@ function cleanallelementsclass(c) {
 
 function printcardsforplayer(player, cards) {
 	if (player == 1) /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
-	    printcards(cards, "tisch", 0, "played-rechts", "right");
+	    printcards(cards, "tisch", "tisch", 0, "played-rechts", "right");
 	if (player == 2)
-	    printcards(cards, "tisch", 0, "played-partner", "left");
+	    printcards(cards, "tisch", "tisch", 0, "played-partner", "left");
 	if (player == 3)
-	    printcards(cards, "tisch", 1, "played-links", "left");
+	    printcards(cards, "tisch", "tisch", 1, "played-links", "left");
 	if (player == 0)
-	    printcards(cards, "tisch", 1, "played-self", "right");
+	    printcards(cards, "tisch", "tisch", 1, "played-self", "right");
 }
 
 function parseincome(jdata) {
+    console.log(jdata);
     let data = JSON.parse(jdata);
     let hand = data.players[0].hand;
     let lastplay = data.last_play || {cards: ""};
@@ -323,7 +320,8 @@ function parseincome(jdata) {
 	/* manchmal bleiben die alten karten hängen - hier kommt alles weg*/
 	cleanallelementsclass("card");
     }
-    printcards(hand, "mycards", 0, "mycard", "center");
+    printcards(hand, "mycards", "alles", 0, "mycard", "center",
+	       offy = document.getElementById("tisch").offsetHeight);
 
     if (lastlogele != null && (lastlogele.cards == "0")) {
 	printcardsforplayer(lastlogele.pi, lastlogele.cards); //extra hund print per log
@@ -334,15 +332,6 @@ function parseincome(jdata) {
 	cleanallelementsclass("played-rechts");
     } else {
 	printcardsforplayer(lastplay.player, lastplay.cards);
-
-	if (lastplay.player == 1) /* 1 und 3 ausgetauscht weil der server falsch rumspielt*/
-	    printcards(lastplay.cards, "tisch", 0, "played-rechts", "right");
-	if (lastplay.player == 2)
-	    printcards(lastplay.cards, "tisch", 0, "played-partner", "left");
-	if (lastplay.player == 3)
-	    printcards(lastplay.cards, "tisch", 1, "played-links", "left");
-	if (lastplay.player == 0)
-	    printcards(lastplay.cards, "tisch", 1, "played-self", "right");
     }
 
     if (data.error) {
