@@ -126,7 +126,7 @@ interact('.table').dropzone({
     ondragenter: function (event) {
 	event.relatedTarget.classList.add('on-table');
 	if (event.relatedTarget.id == "card1") {
-	    const wishTypes = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K', '-'];
+	    const wishTypes = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '-'];
 	    for (let i = 0; i < wishTypes.length; i++)
 		addbutton("wish", wishTypes[i], wishbutton, "wishbutton");
 	}
@@ -401,9 +401,7 @@ function dragMoveListener (event) {
     target.setAttribute('data-x', x)
     target.setAttribute('data-y', y)
 }
-/* Get the documentElement (<html>) to display the page in fullscreen */
-v
-/* View in fullscreen */
+
 function openFullscreen() {
     let elem = document.documentElement;
 
@@ -416,7 +414,6 @@ function openFullscreen() {
     }
 }
 
-/* Close fullscreen */
 function closeFullscreen() {
     let  elem = document.documentElement;
     if (document.exitFullscreen) {
